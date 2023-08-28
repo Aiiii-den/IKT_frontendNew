@@ -20,7 +20,7 @@
   margin: auto;
 }
 
-#create-post #pick-image {
+#create-post #pick-image, #create-post #location-loader {
   display: none;
 }
 
@@ -97,3 +97,5 @@ input, textarea {
   box-sizing: border-box;
   border: 1px solid #999;
 }
+
+

@@ -12,9 +12,9 @@
   <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.blue_grey-red.min.css">
   <link rel="stylesheet" href="/src/css/app.css">
   <link rel="stylesheet" href="/src/css/feed.css">
-  <link rel="apple-touch-icon" sizes="180x180" href="/src/images/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/src/images/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/src/images/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
   <link rel="manifest" href="/manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -36,13 +36,13 @@
       <header class="mdl-layout__header">
         <div class="mdl-layout__header-row">
           <!-- Title -->
-          <span class="mdl-layout-title">Writing prompter</span>
+          <span class="mdl-layout-title">Picture diary</span>
           <!-- Add spacer, to align navigation to the right -->
           <div class="mdl-layout-spacer"></div>
           <!-- Navigation. We hide it in small screens. -->
           <nav class="mdl-navigation mdl-layout--large-screen-only">
             <a class="mdl-navigation__link" href="/">Homepage</a>
-            <a class="mdl-navigation__link" href="/history">History</a>
+            <a class="mdl-navigation__link" href="/help">Help</a>
             <div class="drawer-option">
               <button
                 class="enable-notifications mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-color--accent">
@@ -53,10 +53,10 @@
         </div>
       </header>
       <div class="mdl-layout__drawer">
-        <span class="mdl-layout-title">Writing prompter</span>
+        <span class="mdl-layout-title">Picture diary</span>
         <nav class="mdl-navigation">
           <a class="mdl-navigation__link" href="/">Homepage</a>
-          <a class="mdl-navigation__link" href="/history">History</a>
+          <a class="mdl-navigation__link" href="/help">Help</a>
           <div class="drawer-option">
             <button
               class="enable-notifications mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-color--accent">
@@ -68,70 +68,57 @@
       <main class="mdl-layout__content mat-typography">
         <form>
           <div id="create-post">
-              <video id="player" autoplay></video>
-              <canvas id="canvas" width="320px" height="240px"></canvas>
-              <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" id="capture-btn">Photo</button>
-              <div id="pick-image">
-                  <h6>Capture picture</h6>
-                  <input type="file" accept="image/*" id="image-picker">
-              </div>
-              <div class="input-section mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" id="title">
-                <label class="mdl-textfield__label" for="title" name="title">Title</label>
-              </div>
-              <div class="input-section mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="manual-location">
-                <input class="mdl-textfield__input" type="text" id="location">
-                <label class="mdl-textfield__label" for="location" name="location">Location</label>
-              </div>
-              <!-- 
-              <div class="input-section">
-                <button class="mdl-button mdl-js-button mdl-button--colored" type="button" id="location-btn">Location</button>
-                <div class="mdl-spinner mdl-js-spinner is-active" id="location-loader"></div>
-              </div>
-              -->
-              <br>
-              <div>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-color--accent"
-                        type="submit" id="post-btn">Save
-                </button>
-              </div>
-              <br>
-              <div>
-                <button class="mdl-button mdl-js-button mdl-button--fab" id="close-create-post-modal-btn" type="button">
-                  <i class="material-icons">close</i>
-                </button>
-              </div>
+            <video id="player" autoplay></video>
+            <canvas id="canvas" width="320px" height="240px"></canvas>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-color--accent"
+              id="capture-btn">Photo</button>
+            <div id="pick-image">
+              <h6>Capture picture</h6>
+              <input type="file" accept="image/*" id="image-picker">
+            </div>
+            <div class="input-section mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" type="text" id="title">
+              <label class="mdl-textfield__label" for="title" name="title">Title</label>
+            </div>
+            <div class="input-section mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+              id="manual-location">
+              <input class="mdl-textfield__input" type="text" id="location">
+              <label class="mdl-textfield__label" for="location" name="location">Location</label>
+            </div>
+            <div class="input-section">
+              <button class="mdl-button mdl-js-button mdl-color--primary" type="button"
+                id="location-btn">Location</button>
+              <div class="mdl-spinner mdl-js-spinner is-active" id="location-loader"></div>
+            </div>
+            <br>
+            <div>
+              <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-color--accent"
+                type="submit" id="post-btn">Save
+              </button>
+            </div>
+            <br>
+            <div>
+              <button class="mdl-button mdl-js-button mdl-button--fab" id="close-create-post-modal-btn" type="button">
+                <i class="material-icons">close</i>
+              </button>
+            </div>
           </div>
         </form>
-        
-    <div class="page-content">
-      <h3 class="text-center mdl-color-text--primary">Write like your life depends on it</h3>
-      <div></div>
-    </div>
-    <div class="page-content">
-      <button class="text-center mdl-js-button mdl-button--raised mdl-button--colored mdl-color--primary" id="get-prompt">
-        Get prompt</button> <br>
-      <p class="text-center mdl-color-text--primary" id="random-prompt-gets-put-here">Random prompt filler</pa>
-      <div></div>
-    </div>
 
-    <form>
-      <ul>
-        <textarea class="scrollabletextbox" name="writins-text">
-        </textarea>
-        <label for="save"></label>
-        <button class="text-center mdl-js-button mdl-button--raised mdl-button--colored mdl-color--primary" type="submit" id="save">Save your writing</button>
-      </ul>
-    </form>
+        <div class="page-content text-center">
+          <h4 class="text-center mdl-color-text--primary">Post your picture daily and see yourself grow</h3>
+            <button class="text-center mdl-js-button mdl-button--raised mdl-button--colored mdl-color--primary"
+              id="share-image-button">Upload picture</button>
+        </div>
 
-    <button class="text-center mdl-js-button mdl-button--raised mdl-button--colored mdl-color--primary" id="share-image-button">Upload picture</button>
-    <!--<h4 class="text-center mdl-color-text--primary">Example prompts</h4>
-    <ul>
-      <li id="all-random-prompts"></li>
-    </ul>-->
-    
-    </main>
-  </div>
+        <div id="confirmation-toast" aria-live="assertive" aria-atomic="true" aria-relevant="text"
+          class="mdl-snackbar mdl-js-snackbar">
+          <div class="mdl-snackbar__text"></div>
+          <button type="button" class="mdl-snackbar__action"></button>
+        </div>
+
+      </main>
+    </div>
   </div>
   <script defer src="/src/js/material.min.js"></script>
   <script src="/src/js/idb.js"></script>
@@ -161,7 +148,7 @@
 
   </script>
   <script>
-  const installButton = document.getElementById('get-prompt');
+    const installButton = document.getElementById('get-prompt');
     let deferredPrompt;
 
     window.addEventListener('beforeinstallprompt', evt => {
@@ -178,7 +165,7 @@
     window.addEventListener('appinstalled', () => {
       installButton.style.display = 'none';
     })
- </script>
+  </script>
 
 
 </body>
