@@ -1,6 +1,6 @@
 {
-  "name": "Writing prompt generator",
-  "short_name": "Writing-prompter",
+  "name": "Picture diary",
+  "short_name": "PicDiary",
   "start_url": "./index.html",
   "id": "/index.html",
   "description": "An app to help you write your daily diary",

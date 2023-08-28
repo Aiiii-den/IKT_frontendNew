@@ -282,3 +282,11 @@ locationButton.addEventListener('click', event => {
         fetchedLocation = null;
     }, { timeout: 5000});
 });
+
+/**
+ * IDEE change image attributes to include:
+ *      - DATE
+ *      - TAGS
+ *      - MOOD
+ * 
+ */
