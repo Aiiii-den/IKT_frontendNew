@@ -19,22 +19,20 @@ const db = idb.openDB('writing-store', 1, {
     },
 });
 
-
 function writeData(st, data) {
     return db
-        .then( dbPrompts => {
-            let tx = dbPrompts.transaction(st, 'readwrite');
+        .then( dbWritings => {
+            let tx = dbWritings.transaction(st, 'readwrite');
             let store = tx.objectStore(st);
             store.put(data);
             return tx.done;
         })
 }
 
-
 function readAllData(st) {
     return db
-        .then( dbPrompts => {
-            let tx = dbPrompts.transaction(st, 'readonly');
+        .then( dbWritings => {
+            let tx = dbWritings.transaction(st, 'readonly');
             let store = tx.objectStore(st);
             return store.getAll();
         })
@@ -42,10 +40,23 @@ function readAllData(st) {
 
 function clearAllData(st) {
     return db
-        .then( dbPosts => {
-            let tx = dbPrompts.transaction(st, 'readwrite');
+        .then( dbWritings => {
+            let tx = dbWritings.transaction(st, 'readwrite');
             let store = tx.objectStore(st);
             store.clear();
             return tx.done;
         })
+}
+
+function deleteOneData(st, id) {
+    db
+    .then( dbWritings => {
+        let tx = dbWritings.transaction(st, 'readwrite');
+        let store = tx.objectStore(st);
+        store.delete(id);
+        return tx.done;
+    })
+    .then( () => {
+        console.log('Data deleted ...');
+        });
 }

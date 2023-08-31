@@ -1,7 +1,7 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/db.js');
 
-const CACHE_VERSION = 10;
+const CACHE_VERSION = 11;
 const CURRENT_STATIC_CACHE = 'static-v' + CACHE_VERSION;
 const CURRENT_DYNAMIC_CACHE = 'dynamic-v' + CACHE_VERSION;
 
@@ -70,21 +70,21 @@ self.addEventListener('fetch', event => {
 
     //check from which page the request comes from / put urls in an array and use a for loop to access next index each loop round --> but then again too many responses
     //must ask prof Freiheit
-    const url = 'http://localhost:8082/prompt';
+    const url = 'http://localhost:3000/writing';
     
     if (event.request.url.indexOf(url) >= 0) {
         event.respondWith(
             fetch(event.request)
                 .then(res => {
                     const clonedResponse = res.clone();
-                    clearAllData('prompts')
+                    clearAllData('writings')
                         .then(() => {
                             return clonedResponse.json();
                         })
                         .then(data => {
                             for (let key in data) {
                                 console.log('write data', data[key]);
-                                writeData('prompts', data[key]);
+                                writeData('writings', data[key]);
                             }
                         });
                     return res;
@@ -159,7 +159,7 @@ self.addEventListener('sync', event => {
 
                         console.log('formData', formData)
 
-                        fetch('http://localhost:8080/writing', {
+                        fetch('http://localhost:3000/writing', {
                             method: 'POST',
                             body: formData
                         })
