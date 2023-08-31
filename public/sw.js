@@ -1,7 +1,7 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/db.js');
 
-const CACHE_VERSION = 11;
+const CACHE_VERSION = 15;
 const CURRENT_STATIC_CACHE = 'static-v' + CACHE_VERSION;
 const CURRENT_DYNAMIC_CACHE = 'dynamic-v' + CACHE_VERSION;
 
@@ -61,53 +61,83 @@ self.addEventListener('activate', event => {
 })
 
 /**
- *  DYNAMIC CACHING -- gets the cached example prompts
+ *  DYNAMIC CACHING -- gets the cached example prompts      --> the fetch one for prompts and the sync one for writings??
  */
 self.addEventListener('fetch', event => {
     // check if request is made by chrome extensions or web page
     // if request is made for web page url must contains http.
     if (!(event.request.url.indexOf('http') === 0)) return; // skip the request. if request is not made with http protocol
 
-    //check from which page the request comes from / put urls in an array and use a for loop to access next index each loop round --> but then again too many responses
-    //must ask prof Freiheit
-    const url = 'http://localhost:3000/writing';
-    
-    if (event.request.url.indexOf(url) >= 0) {
-        event.respondWith(
-            fetch(event.request)
-                .then(res => {
-                    const clonedResponse = res.clone();
-                    clearAllData('writings')
-                        .then(() => {
-                            return clonedResponse.json();
-                        })
-                        .then(data => {
-                            for (let key in data) {
-                                console.log('write data', data[key]);
-                                writeData('writings', data[key]);
-                            }
-                        });
-                    return res;
-                })
-        )
+    //check from which page the request comes from
+    const urlPrompts = 'http://localhost:8080/prompt';
+    const urlRandomPrompt = 'http://localhost:8082/promptrandom';
+
+
+    if (event.request.url.includes('/api/resource1')) {
+        // Handle API call to /api/resource1 differently
+        event.respondWith(handleResource1Request(event.request));
+    } else if (event.request.url.includes('/api/resource2')) {
+        // Handle API call to /api/resource2 differently
+        event.respondWith(handleResource2Request(event.request));
     } else {
-        event.respondWith(
-            caches.match(event.request)
-                .then(response => {
-                    if (response) {
-                        return response;
-                    } else {
-                        return fetch(event.request)
-                            .then(res => {
-                                return caches.open(CURRENT_DYNAMIC_CACHE)
-                                    .then(cache => {
-                                        cache.put(event.request.url, res.clone());
-                                        return res;
-                                    })
+
+
+        if (event.request.url.includes('/promptrandom')) {
+            event.respondWith(
+                fetch(event.request)
+                    .then(res => {
+                        const clonedResponse = res.clone();
+                        clearAllData('random-prompt')
+                            .then(() => {
+                                return clonedResponse.json();
+                            })
+                            .then(data => {
+                                for (let key in data) {
+                                    console.log('write data', data[key]);
+                                    writeData('random-prompt', data[key]);
+                                }
                             });
-                    }
-                })
-        )
+                        return res;
+                    })
+            )
+        } else if (event.request.url.includes('/prompt')) {
+            event.respondWith(
+                fetch(event.request)
+                    .then(res => {
+                        const clonedResponse = res.clone();
+                        clearAllData('prompts')
+                            .then(() => {
+                                return clonedResponse.json();
+                            })
+                            .then(data => {
+                                for (let key in data) {
+                                    console.log('write data', data[key]);
+                                    writeData('prompts', data[key]);
+                                }
+                            });
+                        return res;
+                    })
+            )
+        }
+        else {
+            event.respondWith(
+                caches.match(event.request)
+                    .then(response => {
+                        if (response) {
+                            return response;
+                        } else {
+                            return fetch(event.request)
+                                .then(res => {
+                                    return caches.open(CURRENT_DYNAMIC_CACHE)
+                                        .then(cache => {
+                                            cache.put(event.request.url, res.clone());
+                                            return res;
+                                        })
+                                });
+                        }
+                    })
+            )
+        }
     }
 })
 
@@ -118,7 +148,7 @@ self.addEventListener('fetch', event => {
 self.addEventListener('sync', event => {
     console.log('service worker --> background syncing ...', event);
     if (event.tag === 'sync-new-writings') {
-        console.log('service worker --> syncing new posts ...');
+        console.log('service worker --> syncing new writings ...');
         event.waitUntil(
             readAllData('sync-writings')
                 .then(dataArray => {
@@ -126,7 +156,7 @@ self.addEventListener('sync', event => {
                         console.log('data from IndexedDB', data);
                         const formData = new FormData();
                         formData.append('text', data.text),
-                        formData.append('date', data.date)
+                            formData.append('date', data.date)
 
                         console.log('formData', formData)
 
@@ -155,7 +185,8 @@ self.addEventListener('sync', event => {
                     for (let data of dataArray) {
                         console.log('data from IndexedDB', data);
                         const formData = new FormData();
-                        formData.append('text', data.writing)
+                        formData.append('text', data.writing),
+                            formData.append('date', data.date)
 
                         console.log('formData', formData)
 
@@ -187,14 +218,53 @@ self.addEventListener('notificationclick', event => {
 
     console.log(notification);
 
-    if(action === 'confirm') {
+    if (action === 'confirm') {
         console.log('confirm was chosen');
         notification.close();
     } else {
         console.log(action);
+        event.waitUntil(
+            clients.matchAll()      // clients sind alle Windows (Browser), fuer die der Service Worker verantwortlich ist
+                .then(clientsArray => {
+                    let client = clientsArray.find(c => {
+                        return c.visibilityState === 'visible';
+                    });
+
+                    if (client !== undefined) {
+                        client.navigate(notification.data.url);
+                        client.focus();
+                    } else {
+                        clients.openWindow(notification.data.url);
+                    }
+                    notification.close();
+                })
+        );
     }
 });
+
 
 self.addEventListener('notificationclose', event => {
     console.log('notification was closed', event);
 });
+
+
+self.addEventListener('push', event => {
+    console.log('push notification received', event);
+    let data = { title: 'Test', content: 'Fallback message', openUrl: '/' };
+    if (event.data) {
+        data = JSON.parse(event.data.text());
+    }
+
+    let options = {
+        body: data.content,
+        icon: '/src/images/icons/fiw96x96.png',
+        data: {
+            url: data.openUrl
+        }
+    };
+
+    event.waitUntil(
+        self.registration.showNotification(data.title, options)
+    );
+});
+

@@ -136,7 +136,6 @@ function createBulletPoint(prompt, parentElement) {
 }
 
 
-/*
 if('indexedDB' in window) {
     readAllData('prompt')
         .then( data => {
@@ -145,6 +144,6 @@ if('indexedDB' in window) {
                 updateUI(data);
             }
         })
-}*/
+}
 
 

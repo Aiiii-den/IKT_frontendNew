@@ -3,7 +3,7 @@
  */
 
 
-const db = idb.openDB('writing-store', 1, {
+const db = idb.openDB('diary-store', 1, {
     upgrade(db) {
         // Create a store of objects
         const store1 = db.createObjectStore('writings', {
@@ -16,13 +16,23 @@ const db = idb.openDB('writing-store', 1, {
             keyPath: 'id',
         });
         store2.createIndex('id', 'id');
+
+        const store3 = db.createObjectStore('random-prompt', {
+            keyPath: 'id',
+        })
+        store3.createIndex('id', 'id');
+
+        const store4 = db.createObjectStore('prompts', {
+            keyPath: 'id',
+        })
+        store4.createIndex('id', 'id');
     },
 });
 
 function writeData(st, data) {
     return db
-        .then( dbWritings => {
-            let tx = dbWritings.transaction(st, 'readwrite');
+        .then( dbStore => {
+            let tx = dbStore.transaction(st, 'readwrite');
             let store = tx.objectStore(st);
             store.put(data);
             return tx.done;
@@ -31,8 +41,8 @@ function writeData(st, data) {
 
 function readAllData(st) {
     return db
-        .then( dbWritings => {
-            let tx = dbWritings.transaction(st, 'readonly');
+        .then( dbStore => {
+            let tx = dbStore.transaction(st, 'readonly');
             let store = tx.objectStore(st);
             return store.getAll();
         })
@@ -40,8 +50,8 @@ function readAllData(st) {
 
 function clearAllData(st) {
     return db
-        .then( dbWritings => {
-            let tx = dbWritings.transaction(st, 'readwrite');
+        .then( dbStore => {
+            let tx = dbStore.transaction(st, 'readwrite');
             let store = tx.objectStore(st);
             store.clear();
             return tx.done;
@@ -50,8 +60,8 @@ function clearAllData(st) {
 
 function deleteOneData(st, id) {
     db
-    .then( dbWritings => {
-        let tx = dbWritings.transaction(st, 'readwrite');
+    .then( dbStore => {
+        let tx = dbStore.transaction(st, 'readwrite');
         let store = tx.objectStore(st);
         store.delete(id);
         return tx.done;
