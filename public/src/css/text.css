@@ -23,3 +23,15 @@ h4 {
 }
 
 
+.save-writing {
+  padding: 1%
+}
+
+ul {
+  list-style: none;
+}
+
+.end-of-page {
+  padding-top: 10em;
+  padding-bottom: 100em;
+}

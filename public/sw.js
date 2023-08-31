@@ -1,7 +1,7 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/db.js');
 
-const CACHE_VERSION = 21;
+const CACHE_VERSION = 23;
 const CURRENT_STATIC_CACHE = 'static-v' + CACHE_VERSION;
 const CURRENT_DYNAMIC_CACHE = 'dynamic-v' + CACHE_VERSION;
 
@@ -68,19 +68,19 @@ self.addEventListener('fetch', event => {
     // if request is made for web page url must contains http.
     if (!(event.request.url.indexOf('http') === 0)) return; // skip the request. if request is not made with http protocol
 
-    if (event.request.url.includes('random')) {
+    if (event.request.url.includes('promptrandom')) {
         event.respondWith(
             fetch(event.request)
                 .then(res => {
                     const clonedResponse = res.clone();
-                    clearAllData('random-prompt')
+                    clearAllData('random-prompts')
                         .then(() => {
                             return clonedResponse.json();
                         })
                         .then(data => {
                             for (let key in data) {
                                 console.log('write data', data[key]);
-                                writeData('random-prompt', data[key]);
+                                writeData('random-prompts', data[key]);
                             }
                         });
                     return res;

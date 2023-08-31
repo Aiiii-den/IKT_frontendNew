@@ -17,7 +17,7 @@ const db = idb.openDB('diary-store', 1, {
             });
             store2.createIndex('id', 'id');
 
-            const store3 = db.createObjectStore('random-prompt', {
+            const store3 = db.createObjectStore('random-prompts', {
                 keyPath: '_id',
             })
             store3.createIndex('_id', '_id');

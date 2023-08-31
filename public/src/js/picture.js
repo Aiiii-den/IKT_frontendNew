@@ -101,20 +101,14 @@ function createCard(card) {
 
     let cardTitleTextElement = document.createElement('h2');
     cardTitleTextElement.className = 'mdl-card__title-text';
-    cardTitleTextElement.textContent = card.title;
+    cardTitleTextElement.textContent = card.title + " : " + card.mood;
     cardTitle.appendChild(cardTitleTextElement);
-   
-    let cardMood = document.createElement('div');
-    cardMood.className = 'mdl-card__supporting-text';
-    cardMood.textContent = card.mood;
-    cardMood.style.textAlign = 'center';
-    cardWrapper.appendChild(cardMood);
 
-    let cardLocation = document.createElement('div');
-    cardLocation.className = 'mdl-card__supporting-text';
-    cardLocation.textContent = card.location;
-    cardLocation.style.textAlign = 'center';
-    cardWrapper.appendChild(cardLocation);
+    let cardSupportingText = document.createElement('div');
+    cardSupportingText.className = 'mdl-card__supporting-text';
+    cardSupportingText.textContent = card.location + " - " + card.date;
+    cardSupportingText.style.textAlign = 'center';
+    cardWrapper.appendChild(cardSupportingText);
 
     componentHandler.upgradeElement(cardWrapper);
     sharedMomentsArea.appendChild(cardWrapper);

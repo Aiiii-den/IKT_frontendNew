@@ -8,27 +8,6 @@ let date = new Date().toISOString(); // TODO change type in backend
 
 
 /**
- *  ONLOAD
- 
-window.onload = function() {
-    getAllPrompts();
-};
-function getAllPrompts(){
-    fetch('http://localhost:8082/prompt') //TODO make the port for prompt & text different and rename /text to /writing in API
-    .then( response => {
-        console.log('Getting data from promptAPI ...', response);
-        return response.json();
-    })
-    .then( data => {
-        console.log('data ...', data);
-        updateUI(data)
-    }).catch(error => {
-        console.error('Error fetching data:', error);
-    });
-}*/
-
-
-/**
  *  WHEN "GET PROMPT" IS CLICKED
  */
 getRandomPromptButton.addEventListener('click', getRandomPrompt);
@@ -106,7 +85,6 @@ function sendDataToBackend() {
 }
 
 
-
 /**
  *  CACHING
  */
@@ -134,7 +112,7 @@ function updateUI(data) {
 
 function createBulletPoint(prompt, parentElement) {
     let listItem = document.createElement('li');
-    listItem.className = ''; // TODO set style later on 
+    listItem.className = ""; 
     listItem.textContent = prompt.promptQuestion;
 
     parentElement.appendChild(listItem); // Append the list item to the ul element.
