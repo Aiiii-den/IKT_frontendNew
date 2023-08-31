@@ -170,14 +170,14 @@ form.addEventListener('submit', event => {
         alert('Erst Foto aufnehmen!')
         return;
     }
-    if (writingInput.value.trim() === '' || locationInput.value.trim() === '') {
+    if (titleInput.value.trim() === '' || locationInput.value.trim() === '') {
         alert('Bitte Titel und Location angeben!')
         return;
     }
 
     closeCreatePostModal();
 
-    titleValue = writingInput.value;
+    titleValue = titleInput.value;
     locationValue = locationInput.value;
     console.log('titleInput', titleValue)
     console.log('locationInput', locationValue)

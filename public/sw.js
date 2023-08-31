@@ -1,7 +1,7 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/db.js');
 
-const CACHE_VERSION = 7;
+const CACHE_VERSION = 8;
 const CURRENT_STATIC_CACHE = 'static-v' + CACHE_VERSION;
 const CURRENT_DYNAMIC_CACHE = 'dynamic-v' + CACHE_VERSION;
 
@@ -42,7 +42,7 @@ self.addEventListener('install', event => {
 })
 
 /**
- *  ACTIVE SERVICE WORKER + GET CACHING
+ *  ACTIVE SERVICE WORKER + CACHING
  */
 self.addEventListener('activate', event => {
     console.log('service worker --> activating ...', event);
@@ -61,7 +61,7 @@ self.addEventListener('activate', event => {
 })
 
 /**
- *  DYNAMIC CACHING + INDEXEDDB
+ *  DYNAMIC CACHING -- gets the cached example prompts
  */
 self.addEventListener('fetch', event => {
     // check if request is made by chrome extensions or web page
@@ -70,7 +70,7 @@ self.addEventListener('fetch', event => {
 
     //check from which page the request comes from / put urls in an array and use a for loop to access next index each loop round --> but then again too many responses
     //must ask prof Freiheit
-    const url = 'http://localhost:3000/prompt';
+    const url = 'http://localhost:8080/prompt';
     
     if (event.request.url.indexOf(url) >= 0) {
         event.respondWith(
@@ -113,34 +113,60 @@ self.addEventListener('fetch', event => {
 
 
 /**
- *  BACKGROUND SYNC
+ *  BACKGROUND SYNC -- saves the posted writing/text 
  */
 self.addEventListener('sync', event => {
     console.log('service worker --> background syncing ...', event);
-    if (event.tag === 'sync-new-post') {
+    if (event.tag === 'sync-new-writings') {
         console.log('service worker --> syncing new posts ...');
         event.waitUntil(
-            readAllData('sync-posts')
+            readAllData('sync-writings')
                 .then(dataArray => {
                     for (let data of dataArray) {
                         console.log('data from IndexedDB', data);
                         const formData = new FormData();
-                        formData.append('title', data.title);
-                        formData.append('mood', data.mood);
-                        formData.append('date', data.date);
-                        formData.append('location', data.location);
-                        formData.append('file', data.image_id);
+                        formData.append('text', data.text),
+                        formData.append('date', data.date)
 
                         console.log('formData', formData)
 
-                        fetch('http://localhost:3000/posts', {
+                        fetch('http://localhost:3000/text', {
                             method: 'POST',
                             body: formData
                         })
                             .then(response => {
                                 console.log('Data sent to backend ...', response);
                                 if (response.ok) {
-                                    deleteOneData('sync-posts', data.id)
+                                    deleteOneData('sync-writing', data.id)
+                                }
+                            })
+                            .catch(err => {
+                                console.log('Error while sending data to backend ...', err);
+                            })
+                    }
+                })
+        );
+    }
+    else if (event.tag === 'sync-new-writings') {
+        console.log('service worker --> syncing new prompts ...');
+        event.waitUntil(
+            readAllData('sync-writings')
+                .then(dataArray => {
+                    for (let data of dataArray) {
+                        console.log('data from IndexedDB', data);
+                        const formData = new FormData();
+                        formData.append('text', data.writing)
+
+                        console.log('formData', formData)
+
+                        fetch('http://localhost:8080/text', {
+                            method: 'POST',
+                            body: formData
+                        })
+                            .then(response => {
+                                console.log('Data sent to backend ...', response);
+                                if (response.ok) {
+                                    deleteOneData('sync-writings', data.id)
                                 }
                             })
                             .catch(err => {
