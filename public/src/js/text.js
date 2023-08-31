@@ -67,10 +67,11 @@ form.addEventListener('submit', event => {
             .then(sw => {
                 let writing = {
                     id: new Date().toISOString(),
-                    text: writingValue
+                    text: writingValue,
+                    date: date
                 };
 
-                writeData('sync-writing', writing)
+                writeData('sync-writings', writing)
                     .then(() => {
                         return sw.sync.register('sync-new-writing');
                     })
@@ -85,21 +86,25 @@ form.addEventListener('submit', event => {
     }
 });
 function sendDataToBackend() {
-    const formData = new FormData();
-    formData.append('date', date)
-    formData.append('text', writingValue);
 
-    console.log('formData', formData)
+    const requestData = {
+        "date": date,
+        "text": writingValue
+    };
 
-    fetch('http://localhost:3000/writing', { // TODO port!!
+    fetch('http://localhost:3000/writing', {
         method: 'POST',
-        body: formData
+        headers: {
+            'Content-Type': 'application/json' // Set the Content-Type header
+        },
+        body: JSON.stringify(requestData) // Stringify the body data
     })
         .then(response => {
             console.log('Data sent to backend ...', response);
             return response.json();
         });
 }
+
 
 
 /**
@@ -136,10 +141,10 @@ function createBulletPoint(prompt, parentElement) {
 }
 
 
-if('indexedDB' in window) {
-    readAllData('prompt')
-        .then( data => {
-            if(!networkDataReceived) {
+if ('indexedDB' in window) {
+    readAllData('prompts')
+        .then(data => {
+            if (!networkDataReceived) {
                 console.log('From cache ...', data);
                 updateUI(data);
             }

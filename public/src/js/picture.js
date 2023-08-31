@@ -120,11 +120,11 @@ function createCard(card) {
     sharedMomentsArea.appendChild(cardWrapper);
 }
 
-/*
+
 // --> CAUSES FOTO SAVING TO STOP WORKING
 let networkDataReceived = false;
-
-fetch('http://localhost:3000/posts')
+/*
+fetch('http://localhost:8083/image')
     .then((res) => {
         return res.json();
     })
@@ -132,10 +132,10 @@ fetch('http://localhost:3000/posts')
         networkDataReceived = true;
         console.log('From backend ...', data);
         updateUI(data);
-    });
-
+    });*/
+/*
 if('indexedDB' in window) {
-    readAllData('posts')
+    readAllData('images')
         .then( data => {
             if(!networkDataReceived) {
                 console.log('From cache ...', data);
@@ -154,7 +154,7 @@ function sendDataToBackend() {
 
     console.log('formData', formData)
 
-    fetch('http://localhost:3000/posts', {
+    fetch('http://localhost:8083/image', {
         method: 'POST',
         body: formData
     })
@@ -174,7 +174,6 @@ function sendDataToBackend() {
         updateUI([newPost]);
     });
 }
-
 
 
 form.addEventListener('submit', event => {
@@ -202,7 +201,7 @@ form.addEventListener('submit', event => {
     if('serviceWorker' in navigator && 'SyncManager' in window) {
         navigator.serviceWorker.ready
             .then( sw => {
-                let post = {
+                let image = {
                     id: new Date().toISOString(),
                     title: titleValue,
                     mood: moodValue,
@@ -211,9 +210,9 @@ form.addEventListener('submit', event => {
                     image_id: file
                 };
 
-                writeData('sync-posts', post)
+                writeData('sync-images', image)
                     .then( () => {
-                        return sw.sync.register('sync-new-post');
+                        return sw.sync.register('sync-new-image');
                     })
                     .then( () => {
                         let snackbarContainer = new MaterialSnackbar(document.querySelector('#confirmation-toast'));

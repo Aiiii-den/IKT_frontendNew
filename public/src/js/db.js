@@ -4,34 +4,44 @@
 
 
 const db = idb.openDB('diary-store', 1, {
-    upgrade(db) {
-        // Create a store of objects
-        const store1 = db.createObjectStore('writings', {
-            keyPath: '_id',
-        });
-        store1.createIndex('_id', '_id');
+        upgrade(db) {
+            // Create a store of objects
+            /*const store1 = db.createObjectStore('writings', {
+                keyPath: '_id',
+            });
+            store1.createIndex('_id', '_id');*/
 
-        // Create another store of objects
-        const store2 = db.createObjectStore('sync-writings', {
-            keyPath: 'id',
-        });
-        store2.createIndex('id', 'id');
+            // Create another store of objects
+            const store2 = db.createObjectStore('sync-writings', {
+                keyPath: 'id',
+            });
+            store2.createIndex('id', 'id');
 
-        const store3 = db.createObjectStore('random-prompt', {
-            keyPath: 'id',
-        })
-        store3.createIndex('id', 'id');
+            const store3 = db.createObjectStore('random-prompt', {
+                keyPath: 'id',
+            })
+            store3.createIndex('id', 'id');
 
-        const store4 = db.createObjectStore('prompts', {
-            keyPath: 'id',
-        })
-        store4.createIndex('id', 'id');
-    },
-});
+            const store4 = db.createObjectStore('prompts', {
+                keyPath: 'id',
+            })
+            store4.createIndex('id', 'id');
+
+            const store5 = db.createObjectStore('images', {
+                keyPath: 'id',
+            })
+            store5.createIndex('id', 'id');
+
+            const store6 = db.createObjectStore('sync-images', {
+                keyPath: 'id',
+            })
+            store6.createIndex('id', 'id');
+        },
+    });
 
 function writeData(st, data) {
     return db
-        .then( dbStore => {
+        .then(dbStore => {
             let tx = dbStore.transaction(st, 'readwrite');
             let store = tx.objectStore(st);
             store.put(data);
@@ -41,7 +51,7 @@ function writeData(st, data) {
 
 function readAllData(st) {
     return db
-        .then( dbStore => {
+        .then(dbStore => {
             let tx = dbStore.transaction(st, 'readonly');
             let store = tx.objectStore(st);
             return store.getAll();
@@ -50,7 +60,7 @@ function readAllData(st) {
 
 function clearAllData(st) {
     return db
-        .then( dbStore => {
+        .then(dbStore => {
             let tx = dbStore.transaction(st, 'readwrite');
             let store = tx.objectStore(st);
             store.clear();
@@ -60,13 +70,13 @@ function clearAllData(st) {
 
 function deleteOneData(st, id) {
     db
-    .then( dbStore => {
-        let tx = dbStore.transaction(st, 'readwrite');
-        let store = tx.objectStore(st);
-        store.delete(id);
-        return tx.done;
-    })
-    .then( () => {
-        console.log('Data deleted ...');
+        .then(dbStore => {
+            let tx = dbStore.transaction(st, 'readwrite');
+            let store = tx.objectStore(st);
+            store.delete(id);
+            return tx.done;
+        })
+        .then(() => {
+            console.log('Data deleted ...');
         });
 }

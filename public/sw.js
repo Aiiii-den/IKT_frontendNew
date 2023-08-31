@@ -1,7 +1,7 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/db.js');
 
-const CACHE_VERSION = 15;
+const CACHE_VERSION = 19;
 const CURRENT_STATIC_CACHE = 'static-v' + CACHE_VERSION;
 const CURRENT_DYNAMIC_CACHE = 'dynamic-v' + CACHE_VERSION;
 
@@ -72,72 +72,78 @@ self.addEventListener('fetch', event => {
     const urlPrompts = 'http://localhost:8080/prompt';
     const urlRandomPrompt = 'http://localhost:8082/promptrandom';
 
-
-    if (event.request.url.includes('/api/resource1')) {
-        // Handle API call to /api/resource1 differently
-        event.respondWith(handleResource1Request(event.request));
-    } else if (event.request.url.includes('/api/resource2')) {
-        // Handle API call to /api/resource2 differently
-        event.respondWith(handleResource2Request(event.request));
+    if (event.request.url.includes('/promptrandom')) {
+        event.respondWith(
+            fetch(event.request)
+                .then(res => {
+                    const clonedResponse = res.clone();
+                    clearAllData('random-prompt')
+                        .then(() => {
+                            return clonedResponse.json();
+                        })
+                        .then(data => {
+                            for (let key in data) {
+                                console.log('write data', data[key]);
+                                writeData('random-prompt', data[key]);
+                            }
+                        });
+                    return res;
+                })
+        )
+    } else if (event.request.url.includes('/prompt')) {
+        event.respondWith(
+            fetch(event.request)
+                .then(res => {
+                    const clonedResponse = res.clone();
+                    clearAllData('prompts')
+                        .then(() => {
+                            return clonedResponse.json();
+                        })
+                        .then(data => {
+                            for (let key in data) {
+                                console.log('write data', data[key]);
+                                writeData('prompts', data[key]);
+                            }
+                        });
+                    return res;
+                })
+        )/*
+    }else if (event.request.url.includes('/image')) {
+        event.respondWith(
+            fetch(event.request)
+                .then(res => {
+                    const clonedResponse = res.clone();
+                    clearAllData('images')
+                        .then(() => {
+                            return clonedResponse.json();
+                        })
+                        .then(data => {
+                            for (let key in data) {
+                                console.log('write data', data[key]);
+                                writeData('images', data[key]);
+                            }
+                        });
+                    return res;
+                })
+        )*/
     } else {
-
-
-        if (event.request.url.includes('/promptrandom')) {
-            event.respondWith(
-                fetch(event.request)
-                    .then(res => {
-                        const clonedResponse = res.clone();
-                        clearAllData('random-prompt')
-                            .then(() => {
-                                return clonedResponse.json();
-                            })
-                            .then(data => {
-                                for (let key in data) {
-                                    console.log('write data', data[key]);
-                                    writeData('random-prompt', data[key]);
-                                }
+        event.respondWith(
+            caches.match(event.request)
+                .then(response => {
+                    if (response) {
+                        return response;
+                    } else {
+                        return fetch(event.request)
+                            .then(res => {
+                                return caches.open(CURRENT_DYNAMIC_CACHE)
+                                    .then(cache => {
+                                        cache.put(event.request.url, res.clone());
+                                        return res;
+                                    })
                             });
-                        return res;
-                    })
-            )
-        } else if (event.request.url.includes('/prompt')) {
-            event.respondWith(
-                fetch(event.request)
-                    .then(res => {
-                        const clonedResponse = res.clone();
-                        clearAllData('prompts')
-                            .then(() => {
-                                return clonedResponse.json();
-                            })
-                            .then(data => {
-                                for (let key in data) {
-                                    console.log('write data', data[key]);
-                                    writeData('prompts', data[key]);
-                                }
-                            });
-                        return res;
-                    })
-            )
-        }
-        else {
-            event.respondWith(
-                caches.match(event.request)
-                    .then(response => {
-                        if (response) {
-                            return response;
-                        } else {
-                            return fetch(event.request)
-                                .then(res => {
-                                    return caches.open(CURRENT_DYNAMIC_CACHE)
-                                        .then(cache => {
-                                            cache.put(event.request.url, res.clone());
-                                            return res;
-                                        })
-                                });
-                        }
-                    })
-            )
-        }
+                    }
+                })
+        )
     }
 })
 
@@ -147,57 +153,63 @@ self.addEventListener('fetch', event => {
  */
 self.addEventListener('sync', event => {
     console.log('service worker --> background syncing ...', event);
-    if (event.tag === 'sync-new-writings') {
+    if (event.tag === 'sync-new-writing') {
         console.log('service worker --> syncing new writings ...');
         event.waitUntil(
             readAllData('sync-writings')
                 .then(dataArray => {
                     for (let data of dataArray) {
                         console.log('data from IndexedDB', data);
-                        const formData = new FormData();
-                        formData.append('text', data.text),
-                            formData.append('date', data.date)
 
-                        console.log('formData', formData)
+                        const requestData = {
+                            "date": data.date,
+                            "text": data.text
+                        };
+
+                        console.log('requestData', requestData)
 
                         fetch('http://localhost:3000/writing', {
                             method: 'POST',
-                            body: formData
+                            headers: {
+                                'Content-Type': 'application/json' // Set the Content-Type header
+                            },
+                            body: JSON.stringify(requestData) // Stringify the body data
+                        }).then(response => {
+                            console.log('Data sent to backend ...', response);
+                            if (response.ok) {
+                                deleteOneData('sync-writings', data.id)
+                            }
                         })
-                            .then(response => {
-                                console.log('Data sent to backend ...', response);
-                                if (response.ok) {
-                                    deleteOneData('sync-writing', data.id)
-                                }
-                            })
                             .catch(err => {
                                 console.log('Error while sending data to backend ...', err);
                             })
                     }
                 })
-        );
-    }
-    else if (event.tag === 'sync-new-writings') {
-        console.log('service worker --> syncing new prompts ...');
+        );/*
+    } else if (event.tag === 'sync-new-image') {
+        console.log('service worker --> syncing new image ...');
         event.waitUntil(
-            readAllData('sync-writings')
+            readAllData('sync-images')
                 .then(dataArray => {
                     for (let data of dataArray) {
                         console.log('data from IndexedDB', data);
                         const formData = new FormData();
-                        formData.append('text', data.writing),
-                            formData.append('date', data.date)
+                        formData.append('title', data.title);
+                        formData.append('mood', data.mood);
+                        formData.append('date', data.date);
+                        formData.append('location', data.location);
+                        formData.append('file', data.image_id);
 
                         console.log('formData', formData)
 
-                        fetch('http://localhost:3000/writing', {
+                        fetch('http://localhost:8083/image', {
                             method: 'POST',
                             body: formData
                         })
                             .then(response => {
                                 console.log('Data sent to backend ...', response);
                                 if (response.ok) {
-                                    deleteOneData('sync-writings', data.id)
+                                    deleteOneData('sync-images', data.id)
                                 }
                             })
                             .catch(err => {
@@ -205,9 +217,10 @@ self.addEventListener('sync', event => {
                             })
                     }
                 })
-        );
+        )*/
     }
 })
+
 
 /**
  *  PUSH NOTIF
@@ -257,7 +270,7 @@ self.addEventListener('push', event => {
 
     let options = {
         body: data.content,
-        icon: '/src/images/icons/fiw96x96.png',
+        icon: '/src/favicon-32x32.png',
         data: {
             url: data.openUrl
         }
