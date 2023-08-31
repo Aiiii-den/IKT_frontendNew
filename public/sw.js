@@ -5,12 +5,15 @@ const CACHE_VERSION = 7;
 const CURRENT_STATIC_CACHE = 'static-v' + CACHE_VERSION;
 const CURRENT_DYNAMIC_CACHE = 'dynamic-v' + CACHE_VERSION;
 
+/**
+ *  INSTALLING SERVICE WORKER + STATIC CACHING
+ */
 self.addEventListener('install', event => {
     console.log('service worker --> installing ...', event);
     event.waitUntil(
         caches.open(CURRENT_STATIC_CACHE)
             .then(cache => {
-                console.log('Service-Worker-Cache erzeugt und offen');
+                console.log('Service-Worker-Cache created and open');
                 cache.addAll([
                     '/',
                     '/index.html',
@@ -38,8 +41,9 @@ self.addEventListener('install', event => {
     );
 })
 
-
-
+/**
+ *  ACTIVE SERVICE WORKER + GET CACHING
+ */
 self.addEventListener('activate', event => {
     console.log('service worker --> activating ...', event);
     event.waitUntil(
@@ -56,12 +60,18 @@ self.addEventListener('activate', event => {
     return self.clients.claim();
 })
 
+/**
+ *  DYNAMIC CACHING + INDEXEDDB
+ */
 self.addEventListener('fetch', event => {
     // check if request is made by chrome extensions or web page
     // if request is made for web page url must contains http.
     if (!(event.request.url.indexOf('http') === 0)) return; // skip the request. if request is not made with http protocol
 
+    //check from which page the request comes from / put urls in an array and use a for loop to access next index each loop round --> but then again too many responses
+    //must ask prof Freiheit
     const url = 'http://localhost:3000/prompt';
+    
     if (event.request.url.indexOf(url) >= 0) {
         event.respondWith(
             fetch(event.request)
@@ -88,8 +98,8 @@ self.addEventListener('fetch', event => {
                         return response;
                     } else {
                         return fetch(event.request)
-                            .then(res => {     // nicht erneut response nehmen, haben wir schon
-                                return caches.open(CURRENT_DYNAMIC_CACHE)      // neuer, weiterer Cache namens dynamic
+                            .then(res => {
+                                return caches.open(CURRENT_DYNAMIC_CACHE)
                                     .then(cache => {
                                         cache.put(event.request.url, res.clone());
                                         return res;
@@ -101,6 +111,10 @@ self.addEventListener('fetch', event => {
     }
 })
 
+
+/**
+ *  BACKGROUND SYNC
+ */
 self.addEventListener('sync', event => {
     console.log('service worker --> background syncing ...', event);
     if (event.tag === 'sync-new-post') {
@@ -112,6 +126,8 @@ self.addEventListener('sync', event => {
                         console.log('data from IndexedDB', data);
                         const formData = new FormData();
                         formData.append('title', data.title);
+                        formData.append('mood', data.mood);
+                        formData.append('date', data.date);
                         formData.append('location', data.location);
                         formData.append('file', data.image_id);
 
@@ -136,6 +152,9 @@ self.addEventListener('sync', event => {
     }
 })
 
+/**
+ *  PUSH NOTIF
+ */
 self.addEventListener('notificationclick', event => {
     let notification = event.notification;
     let action = event.action;

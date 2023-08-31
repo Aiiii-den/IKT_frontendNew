@@ -1,6 +1,6 @@
 {
-  "name": "Picture diary",
-  "short_name": "PicDiary",
+  "name": "Daily diary",
+  "short_name": "Diary",
   "start_url": "./index.html",
   "id": "/index.html",
   "description": "An app to help you write your daily diary",

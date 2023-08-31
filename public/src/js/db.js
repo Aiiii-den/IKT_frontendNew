@@ -1,3 +1,8 @@
+/**
+ *  INDEXEDDB
+ */
+
+
 const db = idb.openDB('posts-store', 1, {
     upgrade(db) {
         // Create a store of objects

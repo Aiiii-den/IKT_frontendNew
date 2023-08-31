@@ -1,3 +1,15 @@
 .mdl-button {
   margin: 10px;
 }
+
+.input-section {
+  display: block;
+  margin: 10px auto;
+}
+
+input, textarea {
+  font: 1em sans-serif;
+  width: 90%;
+  box-sizing: border-box;
+  border: 1px solid #999;
+}

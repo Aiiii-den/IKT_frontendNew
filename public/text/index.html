@@ -29,7 +29,7 @@
           <a class="mdl-navigation__link" href="/">Homepage</a>
           <a class="mdl-navigation__link" href="/text">Writing</a>
           <div class="drawer-option">
-            <button class="enable-notifications mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-color--accent">
+            <button class="enable-notifications mdl-button mdl-js-button mdl-button--raised mdl-color--accent">
               Notif On
             </button>
           </div>
@@ -42,7 +42,7 @@
         <a class="mdl-navigation__link" href="/">Homepage</a>
         <a class="mdl-navigation__link" href="/text">Writing</a>
         <div class="drawer-option">
-          <button class="enable-notifications mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-color--accent">
+          <button class="enable-notifications mdl-button mdl-js-button mdl-button--raised mdl-color--accent">
             Notif On
           </button>
         </div>
@@ -51,27 +51,29 @@
     <main class="mdl-layout__content mat-typography">
       <div class="page-content">
         <h3 class="text-center mdl-color-text--primary">Write like your life depends on it</h3>
-        <div></div>
       </div>
       <div class="page-content">
-        <button class="text-center mdl-js-button mdl-button--raised mdl-button--colored mdl-color--primary" id="get-prompt">
+        <button class="text-center mdl-js-button mdl-button--raised mdl-button--colored mdl-color--primary" id="get-random-prompt">
           Get prompt</button> <br>
         <p class="text-center mdl-color-text--primary" id="random-prompt-gets-put-here">Random prompt filler</pa>
-        <div></div>
       </div>
  
       <form>
-        <ul>
-          <textarea class="scrollabletextbox" name="writins-text">
-          </textarea>
-          <label for="save"></label>
-          <button class="text-center mdl-js-button mdl-button--raised mdl-button--colored mdl-color--primary" type="submit" id="save">Save your writing</button>
-        </ul>
+        <div class="input-section mdl-textfield mdl-js-textfield">
+          <textarea class="scrollabletextbox" type="text" id="writings"></textarea>
+          <label for="writing" name="writings"></label>
+        </div>  
+        <div>
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-color--accent" type="submit" id="save-writing">
+            Save your writing
+          </button>
+        </div>
       </form>
+
       <div>
         <h4 id="subheader">Prompt ideas</h4>
         <ul id="prompt-list">
-          <li id="prompt-item"></li>
+          <li id="prompt-list-item"></li>
         </ul>
       </div>
       
@@ -81,5 +83,48 @@
 
 <script defer src="/src/js/material.min.js"></script>
 <script src="/src/js/app.js"></script>
+
+<script>
+  const installButton = document.getElementById('save-writing');
+  let deferredPrompt;
+
+  window.addEventListener('beforeinstallprompt', evt => {
+    evt.preventDefault();
+    deferredPrompt = evt;
+    //installButton.style.display = 'block';
+  })
+
+  installButton.addEventListener('click', async () => {
+    await deferredPrompt.prompt();
+    const choiceResult = await deferredPrompt.userChoice;
+  });
+
+  window.addEventListener('appinstalled', () => {
+    installButton.style.display = 'none';
+  })
+</script>
+
+
+<script>fetch('http://localhost:3000/prompt')
+  .then(res => {
+    return res.json();
+  })
+  .then(data => {
+    data.forEach(prompt => {
+      const markup = `<li>${data.promptQuestion}</li>`;
+      document.querySelector('ul').insertAdjacentHTML('beforeend', markup)
+    })
+  })
+</script>
+<script> fetch('http://localhost:3000/randomPrompt')
+  .then(res => {
+    return res.json();
+  })
+  .then(data => {
+    const markup = `<p>${data.promptQuestion}<p>`;
+    document.querySelector('h6').insertAdjacentHTML('beforeend', markup)
+  })
+
+</script>
 </body>
 </html>
