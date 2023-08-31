@@ -5,12 +5,12 @@
   <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Help</title>
+  <title>Writing</title>
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet"
-        href="https://code.getmdl.io/1.3.0/material.blue_grey-red.min.css">
-  <link rel="stylesheet" href="/src/css/help.css">
+        href="https://code.getmdl.io/1.3.0/material.purple-yellow.min.css">
+  <link rel="stylesheet" href="/src/css/writing.css">
   <link rel="manifest" href="../manifest.json">
 
 </head>
@@ -21,56 +21,60 @@
     <header class="mdl-layout__header">
       <div class="mdl-layout__header-row">
         <!-- Title -->
-        <span class="mdl-layout-title">IKT-PWA</span>
+        <span class="mdl-layout-title">Writing diary</span>
         <!-- Add spacer, to align navigation to the right -->
         <div class="mdl-layout-spacer"></div>
         <!-- Navigation. We hide it in small screens. -->
         <nav class="mdl-navigation mdl-layout--large-screen-only">
-          <a class="mdl-navigation__link" href="/">Bilder</a>
-          <a class="mdl-navigation__link" href="/settings">Einstellungen</a>
+          <a class="mdl-navigation__link" href="/">Homepage</a>
+          <a class="mdl-navigation__link" href="/text">Writing</a>
           <div class="drawer-option">
             <button class="enable-notifications mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-color--accent">
-              Benachrichtigungen Ein
+              Notif On
             </button>
           </div>
         </nav>
       </div>
     </header>
     <div class="mdl-layout__drawer">
-      <span class="mdl-layout-title">IKT-PWA</span>
+      <span class="mdl-layout-title">Writing diary</span>
       <nav class="mdl-navigation">
-        <a class="mdl-navigation__link" href="/">Feed</a>
-        <a class="mdl-navigation__link" href="/help">Help</a>
+        <a class="mdl-navigation__link" href="/">Homepage</a>
+        <a class="mdl-navigation__link" href="/text">Writing</a>
         <div class="drawer-option">
           <button class="enable-notifications mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-color--accent">
-            Benachrichtigungen Ein
+            Notif On
           </button>
         </div>
       </nav>
     </div>
     <main class="mdl-layout__content mat-typography">
-      <div class="mdl-grid">
-        <div class="mdl-cell mdl-cell--12-col text-center">
-         <h3>Brauchst Du Hilfe?</h3>
-          <p>Hier erfährst Du, wie Du die App benutzen und neue Bildeinträge erstellen kannst.</p>
-        </div>
+      <div class="page-content">
+        <h3 class="text-center mdl-color-text--primary">Write like your life depends on it</h3>
+        <div></div>
       </div>
-      <div class="mdl-grid">
-        <div class="mdl-cell mdl-cell--12-col text-center">
-          <h3>Kontakt</h3>
-          <div>
-            <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
-              <i class="material-icons">call</i>
-            </button>
-            <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
-              <i class="material-icons">email</i>
-            </button>
-            <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
-              <i class="material-icons">chat_bubble</i>
-            </button>
-          </div>
-        </div>
+      <div class="page-content">
+        <button class="text-center mdl-js-button mdl-button--raised mdl-button--colored mdl-color--primary" id="get-prompt">
+          Get prompt</button> <br>
+        <p class="text-center mdl-color-text--primary" id="random-prompt-gets-put-here">Random prompt filler</pa>
+        <div></div>
       </div>
+ 
+      <form>
+        <ul>
+          <textarea class="scrollabletextbox" name="writins-text">
+          </textarea>
+          <label for="save"></label>
+          <button class="text-center mdl-js-button mdl-button--raised mdl-button--colored mdl-color--primary" type="submit" id="save">Save your writing</button>
+        </ul>
+      </form>
+      <div>
+        <h4 id="subheader">Prompt ideas</h4>
+        <ul id="prompt-list">
+          <li id="prompt-item"></li>
+        </ul>
+      </div>
+      
     </main>
   </div>
 </div>

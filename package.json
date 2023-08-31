@@ -1,7 +1,7 @@
 {
-  "name": "IKT-PWA-01",
+  "name": "Picture diary",
   "version": "1.0.0",
-  "description": "Grundgerüst einer PWA",
+  "description": "Frontend for diary",
   "main": "index.js",
   "scripts": {
     "start": "http-server -c-1"
@@ -12,10 +12,8 @@
     "web",
     "app",
     "ikt",
-    "htw",
-    "fiw"
   ],
-  "author": "J. freiheit",
+  "author": "A. Becker",
   "license": "ISC",
   "devDependencies": {
     "http-server": "^14.1.0"
