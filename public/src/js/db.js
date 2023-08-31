@@ -3,7 +3,7 @@
  */
 
 
-const db = idb.openDB('prompt-store', 1, {
+const db = idb.openDB('writing-store', 1, {
     upgrade(db) {
         // Create a store of objects
         const store1 = db.createObjectStore('writings', {
