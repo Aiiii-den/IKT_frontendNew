@@ -5,9 +5,13 @@ let sharedMomentsArea = document.querySelector('#shared-moments');
 let form = document.querySelector('form');
 let titleInput = document.querySelector('#title');
 let locationInput = document.querySelector('#location');
+let moodInput = document.querySelector('#mood');
+let dateInput = document.querySelector('#date');
 let file = null;
 let titleValue = '';
 let locationValue = '';
+let moodValue = '';
+let dateValue = '';
 let imageURI = '';
 let videoPlayer = document.querySelector('#player');
 let canvasElement = document.querySelector('#canvas');
@@ -73,8 +77,6 @@ function closeCreatePostModal() {
     }, 1);
 }
 
-
-
 shareImageButton.addEventListener('click', openCreatePostModal);
 
 closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
@@ -84,7 +86,6 @@ function updateUI(data) {
     for (let card of data) {
         createCard(card);
     }
-
 }
 
 function createCard(card) {
@@ -97,15 +98,24 @@ function createCard(card) {
     cardTitle.style.backgroundImage = 'url(' + image.src + ')';
     cardTitle.style.backgroundSize = 'cover';
     cardWrapper.appendChild(cardTitle);
+
     let cardTitleTextElement = document.createElement('h2');
     cardTitleTextElement.className = 'mdl-card__title-text';
     cardTitleTextElement.textContent = card.title;
     cardTitle.appendChild(cardTitleTextElement);
-    let cardSupportingText = document.createElement('div');
-    cardSupportingText.className = 'mdl-card__supporting-text';
-    cardSupportingText.textContent = card.location;
-    cardSupportingText.style.textAlign = 'center';
-    cardWrapper.appendChild(cardSupportingText);
+   
+    let cardMood = document.createElement('div');
+    cardMood.className = 'mdl-card__supporting-text';
+    cardMood.textContent = card.mood;
+    cardMood.style.textAlign = 'center';
+    cardWrapper.appendChild(cardMood);
+
+    let cardLocation = document.createElement('div');
+    cardLocation.className = 'mdl-card__supporting-text';
+    cardLocation.textContent = card.location;
+    cardLocation.style.textAlign = 'center';
+    cardWrapper.appendChild(cardLocation);
+
     componentHandler.upgradeElement(cardWrapper);
     sharedMomentsArea.appendChild(cardWrapper);
 }
@@ -137,6 +147,8 @@ if('indexedDB' in window) {
 function sendDataToBackend() {
     const formData = new FormData();
     formData.append('title', titleValue);
+    formData.append('mood', moodValue);
+    formData.append('date', dateValue);
     formData.append('location', locationValue);
     formData.append('file', file);
 
@@ -154,6 +166,8 @@ function sendDataToBackend() {
         console.log('data ...', data);
         const newPost = {
             title: data.title,
+            mood: data.mood,
+            date: data.date,
             location: data.location,
             image_id: imageURI
         }
@@ -164,20 +178,22 @@ function sendDataToBackend() {
 
 
 form.addEventListener('submit', event => {
-    event.preventDefault(); // nicht absenden und neu laden
+    event.preventDefault(); 
 
     if (file == null) {
-        alert('Erst Foto aufnehmen!')
+        alert('Take a pic first!')
         return;
     }
-    if (titleInput.value.trim() === '' || locationInput.value.trim() === '') {
-        alert('Bitte Titel und Location angeben!')
+    if (titleInput.value.trim() === '' || locationInput.value.trim() === '' || moodInput.value.trim() === '' || dateInput.value.trim() === '') {
+        alert('Please input title, mood, date and location!')
         return;
     }
 
     closeCreatePostModal();
-
+/*
     titleValue = titleInput.value;
+    moodValue = moodInput.value;
+    dateValue = dateInput.value;
     locationValue = locationInput.value;
     console.log('titleInput', titleValue)
     console.log('locationInput', locationValue)
@@ -189,6 +205,8 @@ form.addEventListener('submit', event => {
                 let post = {
                     id: new Date().toISOString(),
                     title: titleValue,
+                    mood: moodValue,
+                    date: dateValue,
                     location: locationValue,
                     image_id: file
                 };
@@ -205,7 +223,7 @@ form.addEventListener('submit', event => {
             });
     } else {
         sendDataToBackend();
-    }
+    }*/
 });
 
 
@@ -240,6 +258,12 @@ imagePicker.addEventListener('change', event => {
 /**
  *  GEOLOCATION
  */
+
+function initializeLocation() {
+    if(!('geolocation' in navigator)) {
+        locationButton.style.display = 'none';
+    }
+}
 locationButton.addEventListener('click', event => {
     if(!('geolocation' in navigator)) {
         return;
