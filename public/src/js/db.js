@@ -18,19 +18,19 @@ const db = idb.openDB('diary-store', 1, {
             store2.createIndex('id', 'id');
 
             const store3 = db.createObjectStore('random-prompt', {
-                keyPath: 'id',
+                keyPath: '_id',
             })
-            store3.createIndex('id', 'id');
+            store3.createIndex('_id', '_id');
 
             const store4 = db.createObjectStore('prompts', {
-                keyPath: 'id',
+                keyPath: '_id',
             })
-            store4.createIndex('id', 'id');
+            store4.createIndex('_id', '_id');
 
             const store5 = db.createObjectStore('images', {
-                keyPath: 'id',
+                keyPath: '_id',
             })
-            store5.createIndex('id', 'id');
+            store5.createIndex('_id', '_id');
 
             const store6 = db.createObjectStore('sync-images', {
                 keyPath: 'id',
