@@ -13,7 +13,7 @@ let date = new Date().toISOString(); // TODO change type in backend
 getRandomPromptButton.addEventListener('click', getRandomPrompt);
 
 function getRandomPrompt() {
-    fetch('http://localhost:8082/promptrandom')
+    fetch('http://localhost:8082/random')
         .then(response => {
             console.log('Getting data from promptAPI ...', response);
             return response.json();

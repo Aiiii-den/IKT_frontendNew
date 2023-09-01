@@ -1,7 +1,7 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/db.js');
 
-const CACHE_VERSION = 23;
+const CACHE_VERSION = 27;
 const CURRENT_STATIC_CACHE = 'static-v' + CACHE_VERSION;
 const CURRENT_DYNAMIC_CACHE = 'dynamic-v' + CACHE_VERSION;
 
@@ -241,7 +241,7 @@ self.addEventListener('notificationclose', event => {
 
 self.addEventListener('push', event => {
     console.log('push notification received', event);
-    let data = { title: 'Test', content: 'Fallback message', openUrl: '/' };
+    let data = { title: 'Test', content: 'Fallback message', openUrl: 'https://freiheit.f4.htw-berlin.de/ikt/' };
     if (event.data) {
         data = JSON.parse(event.data.text());
     }
@@ -258,4 +258,3 @@ self.addEventListener('push', event => {
         self.registration.showNotification(data.title, options)
     );
 });
-
