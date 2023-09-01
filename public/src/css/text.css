@@ -13,3 +13,25 @@ input, textarea {
   box-sizing: border-box;
   border: 1px solid #999;
 }
+
+p {
+  margin-top: 2.5%;
+}
+
+h4 {
+  margin-left: 2.5%;
+}
+
+
+.save-writing {
+  padding: 1%
+}
+
+ul {
+  list-style: none;
+}
+
+.end-of-page {
+  padding-top: 10em;
+  padding-bottom: 100em;
+}

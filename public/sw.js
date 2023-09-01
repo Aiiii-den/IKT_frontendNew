@@ -1,7 +1,7 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/db.js');
 
-const CACHE_VERSION = 7;
+const CACHE_VERSION = 23;
 const CURRENT_STATIC_CACHE = 'static-v' + CACHE_VERSION;
 const CURRENT_DYNAMIC_CACHE = 'dynamic-v' + CACHE_VERSION;
 
@@ -42,7 +42,7 @@ self.addEventListener('install', event => {
 })
 
 /**
- *  ACTIVE SERVICE WORKER + GET CACHING
+ *  ACTIVE SERVICE WORKER + CACHING
  */
 self.addEventListener('activate', event => {
     console.log('service worker --> activating ...', event);
@@ -61,18 +61,14 @@ self.addEventListener('activate', event => {
 })
 
 /**
- *  DYNAMIC CACHING + INDEXEDDB
+ *  DYNAMIC CACHING -- gets the cached example prompts      --> the fetch one for prompts and the sync one for writings??
  */
 self.addEventListener('fetch', event => {
     // check if request is made by chrome extensions or web page
     // if request is made for web page url must contains http.
     if (!(event.request.url.indexOf('http') === 0)) return; // skip the request. if request is not made with http protocol
 
-    //check from which page the request comes from / put urls in an array and use a for loop to access next index each loop round --> but then again too many responses
-    //must ask prof Freiheit
-    const url = 'http://localhost:3000/prompt';
-    
-    if (event.request.url.indexOf(url) >= 0) {
+    if (event.request.url.includes('/prompt')) {
         event.respondWith(
             fetch(event.request)
                 .then(res => {
@@ -85,6 +81,24 @@ self.addEventListener('fetch', event => {
                             for (let key in data) {
                                 console.log('write data', data[key]);
                                 writeData('prompts', data[key]);
+                            }
+                        });
+                    return res;
+                })
+        )
+    }else if (event.request.url.includes('/image')) {
+        event.respondWith(
+            fetch(event.request)
+                .then(res => {
+                    const clonedResponse = res.clone();
+                    clearAllData('images')
+                        .then(() => {
+                            return clonedResponse.json();
+                        })
+                        .then(data => {
+                            for (let key in data) {
+                                console.log('write data', data[key]);
+                                writeData('images', data[key]);
                             }
                         });
                     return res;
@@ -113,14 +127,47 @@ self.addEventListener('fetch', event => {
 
 
 /**
- *  BACKGROUND SYNC
+ *  BACKGROUND SYNC -- saves the posted writing/text 
  */
 self.addEventListener('sync', event => {
     console.log('service worker --> background syncing ...', event);
-    if (event.tag === 'sync-new-post') {
-        console.log('service worker --> syncing new posts ...');
+    if (event.tag === 'sync-new-writing') {
+        console.log('service worker --> syncing new writings ...');
         event.waitUntil(
-            readAllData('sync-posts')
+            readAllData('sync-writings')
+                .then(dataArray => {
+                    for (let data of dataArray) {
+                        console.log('data from IndexedDB', data);
+
+                        const requestData = {
+                            "date": data.date,
+                            "text": data.text
+                        };
+
+                        console.log('requestData', requestData)
+
+                        fetch('http://localhost:3000/writing', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json' // Set the Content-Type header
+                            },
+                            body: JSON.stringify(requestData) // Stringify the body data
+                        }).then(response => {
+                            console.log('Data sent to backend ...', response);
+                            if (response.ok) {
+                                deleteOneData('sync-writings', data.id)
+                            }
+                        })
+                            .catch(err => {
+                                console.log('Error while sending data to backend ...', err);
+                            })
+                    }
+                })
+        );/*
+    } else if (event.tag === 'sync-new-image') {
+        console.log('service worker --> syncing new image ...');
+        event.waitUntil(
+            readAllData('sync-images')
                 .then(dataArray => {
                     for (let data of dataArray) {
                         console.log('data from IndexedDB', data);
@@ -133,14 +180,14 @@ self.addEventListener('sync', event => {
 
                         console.log('formData', formData)
 
-                        fetch('http://localhost:3000/posts', {
+                        fetch('http://localhost:8083/image', {
                             method: 'POST',
                             body: formData
                         })
                             .then(response => {
                                 console.log('Data sent to backend ...', response);
                                 if (response.ok) {
-                                    deleteOneData('sync-posts', data.id)
+                                    deleteOneData('sync-images', data.id)
                                 }
                             })
                             .catch(err => {
@@ -148,9 +195,10 @@ self.addEventListener('sync', event => {
                             })
                     }
                 })
-        );
+        )*/
     }
 })
+
 
 /**
  *  PUSH NOTIF
@@ -161,14 +209,53 @@ self.addEventListener('notificationclick', event => {
 
     console.log(notification);
 
-    if(action === 'confirm') {
+    if (action === 'confirm') {
         console.log('confirm was chosen');
         notification.close();
     } else {
         console.log(action);
+        event.waitUntil(
+            clients.matchAll()    
+                .then(clientsArray => {
+                    let client = clientsArray.find(c => {
+                        return c.visibilityState === 'visible';
+                    });
+
+                    if (client !== undefined) {
+                        client.navigate(notification.data.url);
+                        client.focus();
+                    } else {
+                        clients.openWindow(notification.data.url);
+                    }
+                    notification.close();
+                })
+        );
     }
 });
+
 
 self.addEventListener('notificationclose', event => {
     console.log('notification was closed', event);
 });
+
+
+self.addEventListener('push', event => {
+    console.log('push notification received', event);
+    let data = { title: 'Test', content: 'Fallback message', openUrl: '/' };
+    if (event.data) {
+        data = JSON.parse(event.data.text());
+    }
+
+    let options = {
+        body: data.content,
+        icon: '/src/favicon-32x32.png',
+        data: {
+            url: data.openUrl
+        }
+    };
+
+    event.waitUntil(
+        self.registration.showNotification(data.title, options)
+    );
+});
+

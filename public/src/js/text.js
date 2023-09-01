@@ -1,108 +1,37 @@
 let getRandomPromptButton = document.querySelector('#get-random-prompt');
-let saveWritingButton = document.querySelector('#save-writing')
-
-
 let createPostArea = document.querySelector('#create-post');
+let randomPrompt = document.querySelector('#random-prompt-gets-put-here')
 let form = document.querySelector('form');
 let writingInput = document.querySelector('#writings');
-
 let writingValue = '';
+let date = new Date().toISOString(); // TODO change type in backend
 
+
+/**
+ *  WHEN "GET PROMPT" IS CLICKED
+ */
 getRandomPromptButton.addEventListener('click', getRandomPrompt);
 
-closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
-
-function getRandomPrompt(){
-
-}
-
-function getAllPrompts(){
-
-}
-
-function saveWriting(){
-
-}
-
-
-function updateUI(data) {
-
-    for (let prompt of data) {
-        createCard(prompt);
-    }
-
-}
-
-function createCard(prompt) {
-    let cardWrapper = document.createElement('div');
-    cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
-    let cardTitle = document.createElement('div');
-    cardTitle.className = 'mdl-card__title';
-    let image = new Image();
-    image.src = card.image_id;
-    cardTitle.style.backgroundImage = 'url(' + image.src + ')';
-    cardTitle.style.backgroundSize = 'cover';
-    cardWrapper.appendChild(cardTitle);
-    let cardTitleTextElement = document.createElement('h2');
-    cardTitleTextElement.className = 'mdl-card__title-text';
-    cardTitleTextElement.textContent = card.title;
-    cardTitle.appendChild(cardTitleTextElement);
-    let cardSupportingText = document.createElement('div');
-    cardSupportingText.className = 'mdl-card__supporting-text';
-    cardSupportingText.textContent = card.location;
-    cardSupportingText.style.textAlign = 'center';
-    cardWrapper.appendChild(cardSupportingText);
-    componentHandler.upgradeElement(cardWrapper);
-    sharedMomentsArea.appendChild(cardWrapper);
-}
-
-
-// --> CAUSES FOTO SAVING TO STOP WORKING
-let networkDataReceived = false;
-
-fetch('http://localhost:8080/prompt')
-    .then((res) => {
-        return res.json();
-    })
-    .then((data) => {
-        networkDataReceived = true;
-        console.log('From backend ...', data);
-        updateUI(data);
-    });
-
-if('indexedDB' in window) {
-    readAllData('prompt')
-        .then( data => {
-            if(!networkDataReceived) {
-                console.log('From cache ...', data);
-                updateUI(data);
-            }
+function getRandomPrompt() {
+    fetch('http://localhost:8082/promptrandom')
+        .then(response => {
+            console.log('Getting data from promptAPI ...', response);
+            return response.json();
         })
-}
-
-let date = Date.now;
-
-function sendDataToBackend() {
-    const formData = new FormData();
-    formData.append('date', date)
-    formData.append('writing', writingValue);
-
-    console.log('formData', formData)
-
-    fetch('http://localhost:8080/writing', {
-        method: 'POST',
-        body: formData
-    })
-    .then( response => {
-        console.log('Data sent to backend ...', response);
-        return response.json();
-    });
+        .then(data => {
+            console.log('data ...', data);
+            randomPrompt.innerHTML = data.promptQuestion;
+        }).catch(error => {
+            console.error('Error fetching data:', error);
+        });
 }
 
 
-
+/**
+ *  WHEN SAVE WRITING IS CLICKED
+ */
 form.addEventListener('submit', event => {
-    event.preventDefault(); 
+    event.preventDefault();
 
     if (writingInput.value.trim() === '') {
         alert("Nothing's written!")
@@ -112,21 +41,22 @@ form.addEventListener('submit', event => {
     writingValue = writingInput.value;
     console.log('writingValue', writingValue)
 
-    if('serviceWorker' in navigator && 'SyncManager' in window) {
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
         navigator.serviceWorker.ready
-            .then( sw => {
+            .then(sw => {
                 let writing = {
                     id: new Date().toISOString(),
-                    writing: writingValue
+                    text: writingValue,
+                    date: date
                 };
 
-                writeData('sync-writing', writing)
-                    .then( () => {
+                writeData('sync-writings', writing)
+                    .then(() => {
                         return sw.sync.register('sync-new-writing');
                     })
-                    .then( () => {
+                    .then(() => {
                         let snackbarContainer = new MaterialSnackbar(document.querySelector('#confirmation-toast'));
-                        let data = { message: 'Input saved for synchronisation!', timeout: 2000};
+                        let data = { message: 'Input saved for synchronisation!', timeout: 2000 };
                         snackbarContainer.showSnackbar(data);
                     });
             });
@@ -134,3 +64,69 @@ form.addEventListener('submit', event => {
         sendDataToBackend();
     }
 });
+function sendDataToBackend() {
+
+    const requestData = {
+        "date": date,
+        "text": writingValue
+    };
+
+    fetch('http://localhost:3000/writing', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json' // Set the Content-Type header
+        },
+        body: JSON.stringify(requestData) // Stringify the body data
+    })
+        .then(response => {
+            console.log('Data sent to backend ...', response);
+            return response.json();
+        });
+}
+
+
+/**
+ *  CACHING
+ */
+let networkDataReceived = false;
+
+fetch('http://localhost:8082/prompt') // TODO port!!
+    .then((res) => {
+        return res.json();
+    })
+    .then((data) => {
+        networkDataReceived = true;
+        console.log('From backend ...', data);
+        updateUI(data);
+    }).catch(error => {
+        console.error('Error fetching data:', error);
+    });
+
+
+function updateUI(data) {
+    const listElement = document.getElementById('prompt-list'); // Get the ul element by its ID.
+    for (let prompt of data) {
+        createBulletPoint(prompt, listElement); // Pass the ul element as the parentElement.
+    }
+}
+
+function createBulletPoint(prompt, parentElement) {
+    let listItem = document.createElement('li');
+    listItem.className = ""; 
+    listItem.textContent = prompt.promptQuestion;
+
+    parentElement.appendChild(listItem); // Append the list item to the ul element.
+}
+
+
+if ('indexedDB' in window) {
+    readAllData('prompts')
+        .then(data => {
+            if (!networkDataReceived) {
+                console.log('From cache ...', data);
+                updateUI(data);
+            }
+        })
+}
+
+

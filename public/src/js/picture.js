@@ -5,9 +5,13 @@ let sharedMomentsArea = document.querySelector('#shared-moments');
 let form = document.querySelector('form');
 let titleInput = document.querySelector('#title');
 let locationInput = document.querySelector('#location');
+let moodInput = document.querySelector('#mood');
+let dateInput = document.querySelector('#date');
 let file = null;
 let titleValue = '';
 let locationValue = '';
+let moodValue = '';
+let dateValue = '';
 let imageURI = '';
 let videoPlayer = document.querySelector('#player');
 let canvasElement = document.querySelector('#canvas');
@@ -73,8 +77,6 @@ function closeCreatePostModal() {
     }, 1);
 }
 
-
-
 shareImageButton.addEventListener('click', openCreatePostModal);
 
 closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
@@ -84,7 +86,6 @@ function updateUI(data) {
     for (let card of data) {
         createCard(card);
     }
-
 }
 
 function createCard(card) {
@@ -97,24 +98,27 @@ function createCard(card) {
     cardTitle.style.backgroundImage = 'url(' + image.src + ')';
     cardTitle.style.backgroundSize = 'cover';
     cardWrapper.appendChild(cardTitle);
+
     let cardTitleTextElement = document.createElement('h2');
     cardTitleTextElement.className = 'mdl-card__title-text';
-    cardTitleTextElement.textContent = card.title;
+    cardTitleTextElement.textContent = card.title + " : " + card.mood;
     cardTitle.appendChild(cardTitleTextElement);
+
     let cardSupportingText = document.createElement('div');
     cardSupportingText.className = 'mdl-card__supporting-text';
-    cardSupportingText.textContent = card.location;
+    cardSupportingText.textContent = card.location + " - " + card.date;
     cardSupportingText.style.textAlign = 'center';
     cardWrapper.appendChild(cardSupportingText);
+
     componentHandler.upgradeElement(cardWrapper);
     sharedMomentsArea.appendChild(cardWrapper);
 }
 
-/*
+
 // --> CAUSES FOTO SAVING TO STOP WORKING
 let networkDataReceived = false;
-
-fetch('http://localhost:3000/posts')
+/*
+fetch('http://localhost:8083/image')
     .then((res) => {
         return res.json();
     })
@@ -122,10 +126,10 @@ fetch('http://localhost:3000/posts')
         networkDataReceived = true;
         console.log('From backend ...', data);
         updateUI(data);
-    });
-
+    });*/
+/*
 if('indexedDB' in window) {
-    readAllData('posts')
+    readAllData('images')
         .then( data => {
             if(!networkDataReceived) {
                 console.log('From cache ...', data);
@@ -137,12 +141,14 @@ if('indexedDB' in window) {
 function sendDataToBackend() {
     const formData = new FormData();
     formData.append('title', titleValue);
+    formData.append('mood', moodValue);
+    formData.append('date', dateValue);
     formData.append('location', locationValue);
     formData.append('file', file);
 
     console.log('formData', formData)
 
-    fetch('http://localhost:3000/posts', {
+    fetch('http://localhost:8083/image', {
         method: 'POST',
         body: formData
     })
@@ -154,6 +160,8 @@ function sendDataToBackend() {
         console.log('data ...', data);
         const newPost = {
             title: data.title,
+            mood: data.mood,
+            date: data.date,
             location: data.location,
             image_id: imageURI
         }
@@ -162,22 +170,23 @@ function sendDataToBackend() {
 }
 
 
-
 form.addEventListener('submit', event => {
-    event.preventDefault(); // nicht absenden und neu laden
+    event.preventDefault(); 
 
     if (file == null) {
-        alert('Erst Foto aufnehmen!')
+        alert('Take a pic first!')
         return;
     }
-    if (writingInput.value.trim() === '' || locationInput.value.trim() === '') {
-        alert('Bitte Titel und Location angeben!')
+    if (titleInput.value.trim() === '' || locationInput.value.trim() === '' || moodInput.value.trim() === '' || dateInput.value.trim() === '') {
+        alert('Please input title, mood, date and location!')
         return;
     }
 
     closeCreatePostModal();
-
-    titleValue = writingInput.value;
+/*
+    titleValue = titleInput.value;
+    moodValue = moodInput.value;
+    dateValue = dateInput.value;
     locationValue = locationInput.value;
     console.log('titleInput', titleValue)
     console.log('locationInput', locationValue)
@@ -186,16 +195,18 @@ form.addEventListener('submit', event => {
     if('serviceWorker' in navigator && 'SyncManager' in window) {
         navigator.serviceWorker.ready
             .then( sw => {
-                let post = {
+                let image = {
                     id: new Date().toISOString(),
                     title: titleValue,
+                    mood: moodValue,
+                    date: dateValue,
                     location: locationValue,
                     image_id: file
                 };
 
-                writeData('sync-posts', post)
+                writeData('sync-images', image)
                     .then( () => {
-                        return sw.sync.register('sync-new-post');
+                        return sw.sync.register('sync-new-image');
                     })
                     .then( () => {
                         let snackbarContainer = new MaterialSnackbar(document.querySelector('#confirmation-toast'));
@@ -205,7 +216,7 @@ form.addEventListener('submit', event => {
             });
     } else {
         sendDataToBackend();
-    }
+    }*/
 });
 
 
@@ -240,6 +251,12 @@ imagePicker.addEventListener('change', event => {
 /**
  *  GEOLOCATION
  */
+
+function initializeLocation() {
+    if(!('geolocation' in navigator)) {
+        locationButton.style.display = 'none';
+    }
+}
 locationButton.addEventListener('click', event => {
     if(!('geolocation' in navigator)) {
         return;
@@ -270,7 +287,7 @@ locationButton.addEventListener('click', event => {
             })
             .catch( (err) => {
                 console.error('err', err)
-                locationInput.value = 'In Berlin';
+                locationInput.value = 'Berlin';
             });
 
         document.querySelector('#manual-location').classList.add('is-focused');
