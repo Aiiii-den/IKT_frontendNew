@@ -287,7 +287,7 @@ locationButton.addEventListener('click', event => {
             })
             .catch( (err) => {
                 console.error('err', err)
-                locationInput.value = 'In Berlin';
+                locationInput.value = 'Berlin';
             });
 
         document.querySelector('#manual-location').classList.add('is-focused');
