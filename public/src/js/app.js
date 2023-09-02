@@ -12,7 +12,7 @@ if ('serviceWorker' in navigator) {
 }
 
 function displayConfirmNotification() {
-    if('serviceWorker' in navigator) {
+    if ('serviceWorker' in navigator) {
         let options = {
             body: 'You successfully subscribed to our Notification service!',
             icon: '/favicon-32x32.png',
@@ -23,55 +23,97 @@ function displayConfirmNotification() {
             tag: 'confirm-notification',
             renotify: true,
             actions: [
-                { action: 'confirm', title: 'Ok', icon: '/android-chrome-192x192jpg' },
-                { action: 'cancel', title: 'Cancel', icon: '/android-chrome-192x192jpg' },
+                { action: 'confirm', title: 'Ok', icon: '/android-chrome-192x192.png' },
+                { action: 'cancel', title: 'Cancel', icon: '/android-chrome-192x192.png' },
             ]
         };
 
         navigator.serviceWorker.ready
-            .then( sw => {
-                sw.showNotification('Successfully subscribed (from SW)!', options);
+            .then(sw => {
+                sw.showNotification('Successfully subscribed!!', options);
             });
     }
 }
 
 function configurePushSubscription() {
-    if(!('serviceWorker' in navigator)) {
+    if (!('serviceWorker' in navigator)) {
         return
     }
 
     let swReg;
     navigator.serviceWorker.ready
-        .then( sw => {
+        .then(sw => {
             swReg = sw;
             return sw.pushManager.getSubscription();
         })
-        .then( sub => {
-            if(sub === null) {
+        .then(sub => {
+            if (sub === null) {
                 // create a new subscription
-                swReg.pushManager.subscribe();
+                let vapidPublicKey = 'BDZuP4D-ZcRZq3GRa2sCykv3IKAfXRabGHEvTrnz7koVox_mVIWftR7NER9yh1_f5j7nnD8GDC4GVPD1SXWwaP0';
+                let convertedVapidPublicKey = urlBase64ToUint8Array(vapidPublicKey);
+                return swReg.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: convertedVapidPublicKey,
+                })
             } else {
-                // already subscribed
+                // already subscribed   
+
+// TODO ADD NEW SUBSCRIPTION!! - DONE
+                // unsubsribes a subscription
+             /*  sub.unsubscribe()
+                    .then(() => {
+                        console.log('unsubscribed()', sub)
+                    })*/
             }
-        });
+        })
+        .then(async newSub => {
+            const response = await fetch('http://localhost:3000/subscription', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(newSub)
+            });
+            if (response.ok) {
+                displayConfirmNotification();
+            }
+        });;
 }
 
 
 function askForNotificationPermission() {
-    Notification.requestPermission( result => {
+    Notification.requestPermission(result => {
         console.log('User choice', result);
-        if(result !== 'granted') {
+        if (result !== 'granted') {
             console.log('No notification permission granted');
         } else {
-            // displayConfirmNotification();
+            //displayConfirmNotification();
             configurePushSubscription();
         }
     });
 }
 
-if('Notification' in window && 'serviceWorker' in navigator) {
-    for(let button of enableNotificationsButtons) {
+if ('Notification' in window && 'serviceWorker' in navigator) {
+    for (let button of enableNotificationsButtons) {
         button.style.display = 'inline-block';
         button.addEventListener('click', askForNotificationPermission);
     }
+}
+
+
+
+function urlBase64ToUint8Array(base64String) {
+    var padding = '='.repeat((4 - base64String.length % 4) % 4);
+    var base64 = (base64String + padding)
+        .replace(/\-/g, '+')
+        .replace(/_/g, '/');
+
+    var rawData = window.atob(base64);
+    var outputArray = new Uint8Array(rawData.length);
+
+    for (var i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
 }

@@ -109,7 +109,7 @@
   <script src="/src/js/text.js"></script>
 
   <script>
-    const installButton = document.getElementById('save-writing');
+    const installButton = document.getElementById('get-random-prompt');
     let deferredPrompt;
 
     window.addEventListener('beforeinstallprompt', evt => {
@@ -124,7 +124,7 @@
     });
 
     window.addEventListener('appinstalled', () => {
-      installButton.style.display = 'none';
+      //installButton.style.display = 'none';
     })
   </script>
 </body>
