@@ -30,7 +30,7 @@ function displayConfirmNotification() {
 
         navigator.serviceWorker.ready
             .then(sw => {
-                sw.showNotification('Successfully subscribed (from SW)!', options);
+                sw.showNotification('Successfully subscribed!!', options);
             });
     }
 }
@@ -56,10 +56,11 @@ function configurePushSubscription() {
                     applicationServerKey: convertedVapidPublicKey,
                 })
             } else {
-                // already subscribed
+                // already subscribed   
 
+// TODO ADD NEW SUBSCRIPTION!! - DONE
                 // unsubsribes a subscription
-               /*sub.unsubscribe()
+             /*  sub.unsubscribe()
                     .then(() => {
                         console.log('unsubscribed()', sub)
                     })*/
