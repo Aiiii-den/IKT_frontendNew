@@ -148,7 +148,7 @@ function sendDataToBackend() {
 
     console.log('formData', formData)
 
-    fetch('http://localhost:8083/image', {
+    fetch('http://localhost:8083/image', { // TODO update URL
         method: 'POST',
         body: formData
     })

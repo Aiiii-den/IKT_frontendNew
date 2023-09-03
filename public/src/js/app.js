@@ -56,9 +56,8 @@ function configurePushSubscription() {
                     applicationServerKey: convertedVapidPublicKey,
                 })
             } else {
-                // already subscribed   
+                // already subscribed
 
-// TODO ADD NEW SUBSCRIPTION!! - DONE
                 // unsubsribes a subscription
              /*  sub.unsubscribe()
                     .then(() => {
@@ -67,7 +66,7 @@ function configurePushSubscription() {
             }
         })
         .then(async newSub => {
-            const response = await fetch('http://localhost:3000/subscription', {
+            const response = await fetch('http://localhost:3000/subscription', { // TODO update URL
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -78,7 +77,7 @@ function configurePushSubscription() {
             if (response.ok) {
                 displayConfirmNotification();
             }
-        });;
+        });
 }
 
 

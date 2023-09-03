@@ -20,12 +20,12 @@ self.addEventListener('install', event => {
                     '/text/index.html',
                     '/src/js/app.js',
                     '/src/js/picture.js',
-                    '/src/js/text.js',
+                    '/src/js/writing.js',
                     '/src/js/material.min.js',
                     '/src/js/idb.js',
                     '/src/css/app.css',
                     '/src/css/picture.css',
-                    '/src/css/text.css',
+                    '/src/css/writing.css',
                     'android-chrome-192x192.png',
                     'android-chrome-512x512.png',
                     'apple-touch-icon.png',
@@ -146,7 +146,7 @@ self.addEventListener('sync', event => {
 
                         console.log('requestData', requestData)
 
-                        fetch('http://localhost:3000/writing', {
+                        fetch('http://localhost:3000/writing', { // TODO update URL
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json' // Set the Content-Type header
