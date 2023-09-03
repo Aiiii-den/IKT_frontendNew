@@ -4,7 +4,7 @@ let randomPrompt = document.querySelector('#random-prompt-gets-put-here')
 let form = document.querySelector('form');
 let writingInput = document.querySelector('#writings');
 let writingValue = '';
-let date = new Date().toISOString(); // TODO change type in backend
+let date = new Date().toISOString();
 
 
 /**
@@ -13,7 +13,7 @@ let date = new Date().toISOString(); // TODO change type in backend
 getRandomPromptButton.addEventListener('click', getRandomPrompt);
 
 function getRandomPrompt() {
-    fetch('http://localhost:8082/random') // TODO update URL
+    fetch('http://localhost:8082/random') // TODO change to https://ikt-promptapi.onrender.com/random
         .then(response => {
             console.log('Getting data from promptAPI ...', response);
             return response.json();
@@ -71,7 +71,7 @@ function sendDataToBackend() {
         "text": writingValue
     };
 
-    fetch('http://localhost:3000/writing', { // TODO update URL
+    fetch('http://localhost:3000/writing', { // TODO change to https://ikt-writingsapi.onrender.com/writing
         method: 'POST',
         headers: {
             'Content-Type': 'application/json' // Set the Content-Type header
@@ -90,7 +90,7 @@ function sendDataToBackend() {
  */
 let networkDataReceived = false;
 
-fetch('http://localhost:8082/prompt') // TODO update URL
+fetch('http://localhost:8082/prompt') // TODO cahnge to https://ikt-promptapi.onrender.com/prompt
     .then((res) => {
         return res.json();
     })

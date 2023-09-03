@@ -8,7 +8,6 @@
   top: 56px;
   background: white;
   text-align: center;
-  /* visibility: hidden; */
   transform: translateY(100vH);
   transition: transform 0.3s;
 }
@@ -32,15 +31,6 @@
 
 .mdl-spinner {
   margin: auto;
-}
-
-/* hier der Rest */
-
-
-.main-image {
-  max-width: 100%;
-  margin: auto;
-  display: block;
 }
 
 .whiteText {
@@ -99,8 +89,4 @@ textarea {
   width: 90%;
   box-sizing: border-box;
   border: 1px solid #999;
-}
-
-.share-image-button {
-  padding: 1%
 }

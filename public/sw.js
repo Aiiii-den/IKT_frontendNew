@@ -1,7 +1,7 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/db.js');
 
-const CACHE_VERSION = 34;
+const CACHE_VERSION = 37;
 const CURRENT_STATIC_CACHE = 'static-v' + CACHE_VERSION;
 const CURRENT_DYNAMIC_CACHE = 'dynamic-v' + CACHE_VERSION;
 
@@ -146,7 +146,7 @@ self.addEventListener('sync', event => {
 
                         console.log('requestData', requestData)
 
-                        fetch('http://localhost:3000/writing', { // TODO update URL
+                        fetch('http://localhost:3000/writing', { // TODO change to https://ikt-writingsapi.onrender.com/writing
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json' // Set the Content-Type header
