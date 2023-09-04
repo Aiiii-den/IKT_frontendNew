@@ -31,3 +31,7 @@ ul {
   list-style: none;
   margin-left: 17.5%;
 }
+
+label {
+  opacity: 0%;
+}
