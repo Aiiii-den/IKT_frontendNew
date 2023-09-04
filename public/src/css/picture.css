@@ -90,3 +90,7 @@ textarea {
   box-sizing: border-box;
   border: 1px solid #999;
 }
+
+.mdl-textfield__label {
+  color:black;
+}
