@@ -71,7 +71,7 @@ function sendDataToBackend() {
         "text": writingValue
     };
 
-    fetch('http://localhost:3000/writing', { // TODO change to https://ikt-writingsapi.onrender.com/writing
+    fetch('https://ikt-writingsapi.onrender.com/writing', { 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json' // Set the Content-Type header
