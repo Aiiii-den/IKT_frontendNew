@@ -1,7 +1,7 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/db.js');
 
-const CACHE_VERSION = 55;
+const CACHE_VERSION = 58;
 const CURRENT_STATIC_CACHE = 'static-v' + CACHE_VERSION;
 const CURRENT_DYNAMIC_CACHE = 'dynamic-v' + CACHE_VERSION;
 
@@ -67,7 +67,7 @@ self.addEventListener('fetch', event => {
     // if request is made for web page url must contains http.
     if (!(event.request.url.indexOf('http') === 0)) return; // skip the request. if request is not made with http protocol
 
-    if (event.request.url.includes('prompt')) {
+    if (event.request.url.includes('prompt') && !event.request.url.includes('random')) {
         event.respondWith(
             fetch(event.request)
                 .then(res => {
@@ -126,7 +126,7 @@ self.addEventListener('fetch', event => {
 
 
 /**
- *  BACKGROUND SYNC -- saves the posted writing/text 
+ *  BACKGROUND SYNC -- saves the posted writing/text
  */
 self.addEventListener('sync', event => {
     console.log('service worker --> background syncing ...', event);
@@ -139,8 +139,8 @@ self.addEventListener('sync', event => {
                         console.log('data from IndexedDB', data);
 
                         const requestData = {
-                            "date": data.date,
-                            "text": data.text
+                            "text": data.text,
+                            "date": data.date
                         };
 
                         console.log('requestData', requestData)
@@ -247,7 +247,7 @@ self.addEventListener('push', event => {
 
     let options = {
         body: data.content,
-        icon: '/src/favicon-32x32.png',
+        icon: '/favicon-32x32.png',
         data: {
             url: data.openUrl
         }

@@ -13,7 +13,7 @@ let date = new Date().toISOString();
 getRandomPromptButton.addEventListener('click', getRandomPrompt);
 
 function getRandomPrompt() {
-    fetch('http://localhost:8082/random') // TODO change to https://ikt-promptapi.onrender.com/random
+    fetch('https://ikt-promptapi.onrender.com/random')
         .then(response => {
             console.log('Getting data from promptAPI ...', response);
             return response.json();
@@ -90,7 +90,7 @@ function sendDataToBackend() {
  */
 let networkDataReceived = false;
 
-fetch('http://localhost:8082/prompt') // TODO cahnge to https://ikt-promptapi.onrender.com/prompt
+fetch('https://ikt-promptapi.onrender.com/prompt') 
     .then((res) => {
         return res.json();
     })
