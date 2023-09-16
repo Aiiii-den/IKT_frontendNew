@@ -1,34 +1,40 @@
-# Progressive Web Apps - Aktuelle Trends der IKT 2022
+# IKT_frontendNew
 
-Dieses Projekt enthält das Grundgerüst einer Webanwendung. Auf diesem Grundgerüst bauen wir auf und fügen sukzessive *progressive* Funktionalitäten hinzu, so dass am Ende eine *Progressive Web Application* entsteht. 
+This project is the frontend for my final progressive web application assigment. It enables the user to take a picture and save it with adding a title, mood, date and location. Furthermore, the user can request a random prompt for their daily writing practice and save said wriitng to the database.
 
-## Installation
+### Functionality
 
-- Zum Ausführen des Projektes wird [Node.js](https://nodejs.org) verendet. Sie müssen es auf Ihren Rechner installieren. 
+The application calls these three APIs:
+__1. Images API :__ 
+``````
+POST: https://ikt-imagesapi-new.onrender.com/image
+GET all: https://ikt-imagesapi-new.onrender.com/image
+```
+__2. Prompt API:__ 
+```
+GET all: https://ikt-promptapi.onrender.com/prompt
+GET random: https://ikt-promptapi.onrender.com/random
+```
+__3. Writings API:__
+POST: https://ikt-writingsapi.onrender.com/writing
 
-- In der Wahl Ihrer IDE sind Sie völlig frei. Empfehlungen finden Sie unter [https://freiheit.f4.htw-berlin.de/ikt/tools/#integrated-development-environment-ide](https://freiheit.f4.htw-berlin.de/ikt/tools/#integrated-development-environment-ide)
+and enables the following functionality:
+[ ] installation
+[ ] offline usage
+[ ] geolocation
+[ ] camera usage
+[ ] push notifications
+[ ] background synchronisation
 
-- Zum Starten des Projektes wechseln Sie im Terminal (Terminal Ihres Rechners oder das Terminal in der IDE) in den Projektordner (`cd IKT-PWA-01`) und führen dort 
+### How to install:
+1. Clone repository locally
+2. Run `npm i`
+3. Run with `npm start`  
+4. Stop with `Ctrl-C`
+Or find the deployed project at: https://ikt-frontend-new.vercel.app
 
-	`npm install` 
+### Screenshots of the app in use:
 
-	aus (es genügt auch `npm i`). Damit werden alle erforderlichen Abhängigkeiten installiert. Es entsteht der `node_modules`-Ordner. 
-
-- Nach erfolgreicher Installation der Abhängigkeiten, geben Sie  
-
-	`npm start` 
-
-	ein, um Ihr Projekt auszuführen (Es wird der `http-server` mit der Option `-c-1` gestartet. Diese Option disabled Caching). Klicken Sie danach auf [localhost:8080](http://localhost:8080) oder geben Sie die URL direkt in Ihren Browser ein.
-
-- Sollten Sie Änderungen an der IMplementierung vornehmen und diese ausprobieren wollen, müssen Sie den Server zunächst wieder stoppen:
-
-	`Ctrl-C`
-
-	und geben dann erneut 
-
-	`npm start` 
-
-	ein. 
 
 
  

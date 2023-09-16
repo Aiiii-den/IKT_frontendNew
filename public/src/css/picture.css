@@ -94,3 +94,7 @@ textarea {
 .mdl-textfield__label {
   color:black;
 }
+
+#share-image-button {
+  margin-bottom: 5%;
+}
