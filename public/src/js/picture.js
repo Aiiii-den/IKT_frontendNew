@@ -101,7 +101,7 @@ function createCard(card) {
 
     let cardTitleTextElement = document.createElement('h2');
     cardTitleTextElement.className = 'mdl-card__title-text';
-    cardTitleTextElement.textContent = card.title + " : " + card.mood;
+    cardTitleTextElement.textContent = card.title + "-" + card.mood;
     cardTitle.appendChild(cardTitleTextElement);
 
     let cardSupportingText = document.createElement('div');
@@ -114,8 +114,8 @@ function createCard(card) {
     sharedMomentsArea.appendChild(cardWrapper);
 }
 
-
-// --> CAUSES FOTO SAVING TO STOP WORKING
+/*
+// --> CAUSES FOTO SAVING TO STOP WORKING  WTF IS GOING ON?
 let networkDataReceived = false;
 
 fetch('http://localhost:8080/image')
@@ -136,7 +136,7 @@ if('indexedDB' in window) {
                 updateUI(data);
             }
         })
-}
+}*/
 
 function sendDataToBackend() {
     const formData = new FormData();
@@ -148,7 +148,7 @@ function sendDataToBackend() {
 
     console.log('formData', formData)
 
-    fetch('http://localhost:8083/image', { //TODO fix API
+    fetch('http://localhost:8080/image', { 
         method: 'POST',
         body: formData
     })
@@ -188,9 +188,6 @@ form.addEventListener('submit', event => {
     moodValue = moodInput.value;
     dateValue = dateInput.value;
     locationValue = locationInput.value;
-    console.log('titleInput', titleValue)
-    console.log('locationInput', locationValue)
-    console.log('file', file)
 
     if('serviceWorker' in navigator && 'SyncManager' in window) {
         navigator.serviceWorker.ready
@@ -210,7 +207,7 @@ form.addEventListener('submit', event => {
                     })
                     .then( () => {
                         let snackbarContainer = new MaterialSnackbar(document.querySelector('#confirmation-toast'));
-                        let data = { message: 'Eingaben zum Synchronisieren gespeichert!', timeout: 2000};
+                        let data = { message: 'Input saved for synchronisation!', timeout: 2000};
                         snackbarContainer.showSnackbar(data);
                     });
             });
@@ -299,11 +296,3 @@ locationButton.addEventListener('click', event => {
         fetchedLocation = null;
     }, { timeout: 5000});
 });
-
-/**
- * IDEE change image attributes to include:
- *      - DATE
- *      - TAGS
- *      - MOOD
- * 
- */
