@@ -5,25 +5,25 @@
 
 const db = idb.openDB('diary-store', 1, {
         upgrade(db) {
-            const store2 = db.createObjectStore('sync-writings', {
+            const writingSync = db.createObjectStore('sync-writings', {
                 keyPath: 'id',
             });
-            store2.createIndex('id', 'id');
+            writingSync.createIndex('id', 'id');
 
-            const store4 = db.createObjectStore('prompts', {
+            const promptsBE = db.createObjectStore('prompts', {
                 keyPath: '_id',
             })
-            store4.createIndex('_id', '_id');
+            promptsBE.createIndex('_id', '_id');
 
-            const store5 = db.createObjectStore('images', {
+            const imagesBE = db.createObjectStore('images', {
                 keyPath: '_id',
             })
-            store5.createIndex('_id', '_id');
+            imagesBE.createIndex('_id', '_id');
 
-            const store6 = db.createObjectStore('sync-images', {
+            const imagesSync = db.createObjectStore('sync-images', {
                 keyPath: 'id',
             })
-            store6.createIndex('id', 'id');
+            imagesSync.createIndex('id', 'id');
         },
     });
 

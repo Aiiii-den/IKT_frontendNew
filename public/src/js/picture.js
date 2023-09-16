@@ -47,6 +47,8 @@ function initializeMedia() {
         .then(stream => {
             videoPlayer.srcObject = stream;
             videoPlayer.style.display = 'block';
+            captureButton.style.display = 'block';
+
         })
         .catch(err => {
             imagePickerArea.style.display = 'block';
@@ -101,7 +103,7 @@ function createCard(card) {
 
     let cardTitleTextElement = document.createElement('h2');
     cardTitleTextElement.className = 'mdl-card__title-text';
-    cardTitleTextElement.textContent = card.title + " : " + card.mood;
+    cardTitleTextElement.textContent = card.title + "-" + card.mood;
     cardTitle.appendChild(cardTitleTextElement);
 
     let cardSupportingText = document.createElement('div');
@@ -115,10 +117,10 @@ function createCard(card) {
 }
 
 
-// --> CAUSES FOTO SAVING TO STOP WORKING
+// --> CAUSES FOTO SAVING TO STOP WORKING  WTF IS GOING ON?
 let networkDataReceived = false;
-/*
-fetch('http://localhost:8083/image')
+
+fetch('http://localhost:8080/image')
     .then((res) => {
         return res.json();
     })
@@ -126,12 +128,13 @@ fetch('http://localhost:8083/image')
         networkDataReceived = true;
         console.log('From backend ...', data);
         updateUI(data);
-    });*/
-/*
-if('indexedDB' in window) {
+    });
+
+    /*
+if ('indexedDB' in window) {
     readAllData('images')
-        .then( data => {
-            if(!networkDataReceived) {
+        .then(data => {
+            if (!networkDataReceived) {
                 console.log('From cache ...', data);
                 updateUI(data);
             }
@@ -148,30 +151,30 @@ function sendDataToBackend() {
 
     console.log('formData', formData)
 
-    fetch('http://localhost:8083/image', {
+    fetch('http://localhost:8080/image', {
         method: 'POST',
         body: formData
     })
-    .then( response => {
-        console.log('Data sent to backend ...', response);
-        return response.json();
-    })
-    .then( data => {
-        console.log('data ...', data);
-        const newPost = {
-            title: data.title,
-            mood: data.mood,
-            date: data.date,
-            location: data.location,
-            image_id: imageURI
-        }
-        updateUI([newPost]);
-    });
+        .then(response => {
+            console.log('Data sent to backend ...', response);
+            return response.json();
+        })
+        .then(data => {
+            console.log('data ...', data);
+            const newPost = {
+                title: data.title,
+                mood: data.mood,
+                date: data.date,
+                location: data.location,
+                image_id: imageURI
+            }
+            updateUI([newPost]);
+        });
 }
 
 
 form.addEventListener('submit', event => {
-    event.preventDefault(); 
+    event.preventDefault();
 
     if (file == null) {
         alert('Take a pic first!')
@@ -183,18 +186,15 @@ form.addEventListener('submit', event => {
     }
 
     closeCreatePostModal();
-/*
+
     titleValue = titleInput.value;
     moodValue = moodInput.value;
     dateValue = dateInput.value;
     locationValue = locationInput.value;
-    console.log('titleInput', titleValue)
-    console.log('locationInput', locationValue)
-    console.log('file', file)
 
-    if('serviceWorker' in navigator && 'SyncManager' in window) {
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
         navigator.serviceWorker.ready
-            .then( sw => {
+            .then(sw => {
                 let image = {
                     id: new Date().toISOString(),
                     title: titleValue,
@@ -205,18 +205,18 @@ form.addEventListener('submit', event => {
                 };
 
                 writeData('sync-images', image)
-                    .then( () => {
+                    .then(() => {
                         return sw.sync.register('sync-new-image');
                     })
-                    .then( () => {
+                    .then(() => {
                         let snackbarContainer = new MaterialSnackbar(document.querySelector('#confirmation-toast'));
-                        let data = { message: 'Eingaben zum Synchronisieren gespeichert!', timeout: 2000};
+                        let data = { message: 'Input saved for synchronisation!', timeout: 2000 };
                         snackbarContainer.showSnackbar(data);
                     });
             });
     } else {
         sendDataToBackend();
-    }*/
+    }
 });
 
 
@@ -253,25 +253,25 @@ imagePicker.addEventListener('change', event => {
  */
 
 function initializeLocation() {
-    if(!('geolocation' in navigator)) {
+    if (!('geolocation' in navigator)) {
         locationButton.style.display = 'none';
     }
 }
 locationButton.addEventListener('click', event => {
-    if(!('geolocation' in navigator)) {
+    if (!('geolocation' in navigator)) {
         return;
     }
 
     locationButton.style.display = 'none';
     locationLoader.style.display = 'block';
 
-    navigator.geolocation.getCurrentPosition( position => {
+    navigator.geolocation.getCurrentPosition(position => {
         locationButton.style.display = 'inline';
         locationLoader.style.display = 'none';
         fetchedLocation = { latitude: position.coords.latitude, longitude: position.coords.longitude };
         console.log('current position: ', fetchedLocation);
 
-        let nominatimURL = 'https://nominatim.openstreetmap.org/reverse'; 
+        let nominatimURL = 'https://nominatim.openstreetmap.org/reverse';
         nominatimURL += '?format=jsonv2';   // format=[xml|json|jsonv2|geojson|geocodejson]
         nominatimURL += '&lat=' + fetchedLocation.latitude;
         nominatimURL += '&lon=' + fetchedLocation.longitude;
@@ -285,7 +285,7 @@ locationButton.addEventListener('click', event => {
                 console.log('nominatim res.json() ...', data);
                 locationInput.value = data.display_name;
             })
-            .catch( (err) => {
+            .catch((err) => {
                 console.error('err', err)
                 locationInput.value = 'Berlin';
             });
@@ -297,13 +297,5 @@ locationButton.addEventListener('click', event => {
         locationLoader.style.display = 'none';
         alert('Couldn\'t fetch location, please enter manually!');
         fetchedLocation = null;
-    }, { timeout: 5000});
+    }, { timeout: 5000 });
 });
-
-/**
- * IDEE change image attributes to include:
- *      - DATE
- *      - TAGS
- *      - MOOD
- * 
- */

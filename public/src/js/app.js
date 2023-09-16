@@ -56,18 +56,17 @@ function configurePushSubscription() {
                     applicationServerKey: convertedVapidPublicKey,
                 })
             } else {
-                // already subscribed   
+                // already subscribed
 
-// TODO ADD NEW SUBSCRIPTION!! - DONE
                 // unsubsribes a subscription
-             /*  sub.unsubscribe()
+            /* sub.unsubscribe()
                     .then(() => {
                         console.log('unsubscribed()', sub)
                     })*/
             }
         })
         .then(async newSub => {
-            const response = await fetch('http://localhost:3000/subscription', {
+            const response = await fetch('https://ikt-writingsapi.onrender.com/subscription', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -78,7 +77,7 @@ function configurePushSubscription() {
             if (response.ok) {
                 displayConfirmNotification();
             }
-        });;
+        });
 }
 
 

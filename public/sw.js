@@ -1,7 +1,7 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/db.js');
 
-const CACHE_VERSION = 34;
+const CACHE_VERSION = 71;
 const CURRENT_STATIC_CACHE = 'static-v' + CACHE_VERSION;
 const CURRENT_DYNAMIC_CACHE = 'dynamic-v' + CACHE_VERSION;
 
@@ -17,25 +17,26 @@ self.addEventListener('install', event => {
                 cache.addAll([
                     '/',
                     '/index.html',
-                    '/text/index.html',
+                    '/writing/index.html',
                     '/src/js/app.js',
                     '/src/js/picture.js',
-                    '/src/js/text.js',
+                    '/src/js/writing.js',
                     '/src/js/material.min.js',
                     '/src/js/idb.js',
                     '/src/css/app.css',
                     '/src/css/picture.css',
-                    '/src/css/text.css',
+                    '/src/css/writing.css',
                     'android-chrome-192x192.png',
                     'android-chrome-512x512.png',
                     'apple-touch-icon.png',
                     'favicon-16x16.png',
                     'favicon-32x32.png',
-                    'https://fonts.googleapis.com/css?family=Roboto:400,700',
+                    'maskable_icon.png',
+                    'https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap', 
+                    'https://fonts.googleapis.com/icon?family=Material+Icons&display=swap',
+                    'https://code.getmdl.io/1.3.0/material.purple-yellow.min.css',
                     'https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxKKTU1Kg.woff2',
-                    'https://fonts.googleapis.com/icon?family=Material+Icons',
-                    'https://code.getmdl.io/1.3.0/material.blue_grey-red.min.css',
-                    'https://fonts.gstatic.com/s/materialicons/v140/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2'
+                    'https://fonts.gstatic.com/s/materialicons/v140/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2',
                 ]);
             })
     );
@@ -68,7 +69,7 @@ self.addEventListener('fetch', event => {
     // if request is made for web page url must contains http.
     if (!(event.request.url.indexOf('http') === 0)) return; // skip the request. if request is not made with http protocol
 
-    if (event.request.url.includes('prompt')) {
+    if (event.request.url.includes('prompt') && !event.request.url.includes('random')) {
         event.respondWith(
             fetch(event.request)
                 .then(res => {
@@ -86,7 +87,7 @@ self.addEventListener('fetch', event => {
                     return res;
                 })
         )
-    }else if (event.request.url.includes('/image')) {
+    } if (event.request.url.includes('image')) {
         event.respondWith(
             fetch(event.request)
                 .then(res => {
@@ -127,7 +128,7 @@ self.addEventListener('fetch', event => {
 
 
 /**
- *  BACKGROUND SYNC -- saves the posted writing/text 
+ *  BACKGROUND SYNC -- saves the posted writing/text
  */
 self.addEventListener('sync', event => {
     console.log('service worker --> background syncing ...', event);
@@ -140,13 +141,13 @@ self.addEventListener('sync', event => {
                         console.log('data from IndexedDB', data);
 
                         const requestData = {
-                            "date": data.date,
-                            "text": data.text
+                            "text": data.text,
+                            "date": data.date
                         };
 
                         console.log('requestData', requestData)
 
-                        fetch('http://localhost:3000/writing', {
+                        fetch('https://ikt-writingsapi.onrender.com/writing', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json' // Set the Content-Type header
@@ -163,7 +164,7 @@ self.addEventListener('sync', event => {
                             })
                     }
                 })
-        );/*
+        );
     } else if (event.tag === 'sync-new-image') {
         console.log('service worker --> syncing new image ...');
         event.waitUntil(
@@ -180,7 +181,7 @@ self.addEventListener('sync', event => {
 
                         console.log('formData', formData)
 
-                        fetch('http://localhost:8083/image', {
+                        fetch('http://localhost:8080/image', {
                             method: 'POST',
                             body: formData
                         })
@@ -195,7 +196,7 @@ self.addEventListener('sync', event => {
                             })
                     }
                 })
-        )*/
+        )
     }
 })
 
@@ -248,7 +249,7 @@ self.addEventListener('push', event => {
 
     let options = {
         body: data.content,
-        icon: '/src/favicon-32x32.png',
+        icon: '/favicon-32x32.png',
         data: {
             url: data.openUrl
         }
