@@ -183,7 +183,7 @@ form.addEventListener('submit', event => {
     }
 
     closeCreatePostModal();
-/*
+
     titleValue = titleInput.value;
     moodValue = moodInput.value;
     dateValue = dateInput.value;
@@ -216,7 +216,7 @@ form.addEventListener('submit', event => {
             });
     } else {
         sendDataToBackend();
-    }*/
+    }
 });
 
 
