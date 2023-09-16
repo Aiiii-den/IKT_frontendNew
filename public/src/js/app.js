@@ -59,7 +59,7 @@ function configurePushSubscription() {
                 // already subscribed
 
                 // unsubsribes a subscription
-             /*  sub.unsubscribe()
+            /* sub.unsubscribe()
                     .then(() => {
                         console.log('unsubscribed()', sub)
                     })*/

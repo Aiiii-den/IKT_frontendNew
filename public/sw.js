@@ -1,7 +1,7 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/db.js');
 
-const CACHE_VERSION = 64;
+const CACHE_VERSION = 70;
 const CURRENT_STATIC_CACHE = 'static-v' + CACHE_VERSION;
 const CURRENT_DYNAMIC_CACHE = 'dynamic-v' + CACHE_VERSION;
 
@@ -34,7 +34,9 @@ self.addEventListener('install', event => {
                     'maskable_icon.png',
                     'https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap', 
                     'https://fonts.googleapis.com/icon?family=Material+Icons&display=swap',
-                    'https://code.getmdl.io/1.3.0/material.blue_grey-red.min.css'
+                    'https://code.getmdl.io/1.3.0/material.purple-yellow.min.css',
+                    'https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxKKTU1Kg.woff2',
+                    'https://fonts.gstatic.com/s/materialicons/v140/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2',
                 ]);
             })
     );
@@ -85,7 +87,7 @@ self.addEventListener('fetch', event => {
                     return res;
                 })
         )
-    }else if (event.request.url.includes('/image')) {
+    } if (event.request.url.includes('image')) {
         event.respondWith(
             fetch(event.request)
                 .then(res => {
