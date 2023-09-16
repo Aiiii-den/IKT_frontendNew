@@ -117,8 +117,8 @@ function createCard(card) {
 
 // --> CAUSES FOTO SAVING TO STOP WORKING
 let networkDataReceived = false;
-/*
-fetch('http://localhost:8083/image')
+
+fetch('http://localhost:8080/image')
     .then((res) => {
         return res.json();
     })
@@ -126,8 +126,8 @@ fetch('http://localhost:8083/image')
         networkDataReceived = true;
         console.log('From backend ...', data);
         updateUI(data);
-    });*/
-/*
+    });
+
 if('indexedDB' in window) {
     readAllData('images')
         .then( data => {
@@ -136,7 +136,7 @@ if('indexedDB' in window) {
                 updateUI(data);
             }
         })
-}*/
+}
 
 function sendDataToBackend() {
     const formData = new FormData();

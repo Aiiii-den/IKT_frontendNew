@@ -13,14 +13,14 @@ let date = new Date().toISOString();
 getRandomPromptButton.addEventListener('click', getRandomPrompt);
 
 function getRandomPrompt() {
-    fetch('https://ikt-promptapi.onrender.com/random')
+    fetch('https://ikt-promptapi.onrender.com/random') //somethings wrong here
         .then(response => {
             console.log('Getting data from promptAPI ...', response);
             return response.json();
         })
         .then(data => {
             console.log('data ...', data);
-            randomPrompt.innerHTML = data.promptQuestion;
+            randomPrompt.textContent = data.promptQuestion;
         }).catch(error => {
             console.error('Error fetching data:', error);
         });

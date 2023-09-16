@@ -66,7 +66,7 @@ function configurePushSubscription() {
             }
         })
         .then(async newSub => {
-            const response = await fetch('http://localhost:3000/subscription', { // TODO update URL
+            const response = await fetch('https://ikt-writingsapi.onrender.com/subscription', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

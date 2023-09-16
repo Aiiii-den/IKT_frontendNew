@@ -1,7 +1,7 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/db.js');
 
-const CACHE_VERSION = 58;
+const CACHE_VERSION = 61;
 const CURRENT_STATIC_CACHE = 'static-v' + CACHE_VERSION;
 const CURRENT_DYNAMIC_CACHE = 'dynamic-v' + CACHE_VERSION;
 
@@ -162,7 +162,7 @@ self.addEventListener('sync', event => {
                             })
                     }
                 })
-        );/*
+        );
     } else if (event.tag === 'sync-new-image') {
         console.log('service worker --> syncing new image ...');
         event.waitUntil(
@@ -179,7 +179,7 @@ self.addEventListener('sync', event => {
 
                         console.log('formData', formData)
 
-                        fetch('http://localhost:8083/image', {
+                        fetch('http://localhost:8080/image', {
                             method: 'POST',
                             body: formData
                         })
@@ -194,7 +194,7 @@ self.addEventListener('sync', event => {
                             })
                     }
                 })
-        )*/
+        )
     }
 })
 
