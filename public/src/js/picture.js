@@ -119,7 +119,7 @@ function createCard(card) {
 
 let networkDataReceived = false;
 
-fetch('https://ikt-imagesapi-new.onrender.com/image')
+fetch('http://localhost:8080/image')
     .then((res) => {
         return res.json();
     })
