@@ -4,15 +4,18 @@ This project is the frontend for my final progressive web application assigment.
 
 ### Screenshots of the app in use:  
 **Upload an image**
+![Homepage.png](documentationImages%2FHomepage.png)
+![TakePhoto.png](documentationImages%2FTakePhoto.png)  
 
 **Get a random prompt and save your writing**
+![PromptAndWriting.png](documentationImages%2FPromptAndWriting.png)  
 
 ### Functionality
 
 The application calls three APIs:  
 __1. Images API :__ 
 ```
-POST: https://ikt-imagesapi-new.onrender.com/image
+POST: http://localhost:8080/image
 GET all: https://ikt-imagesapi-new.onrender.com/image
 ```
 __2. Prompt API:__ 
@@ -37,5 +40,6 @@ And enables the following functionality:
 1. Clone repository locally
 2. Run `npm i`
 3. Run with `npm start`  
-4. Stop with `ctrl-c`  
+4. Stop with `ctrl-c`
+
 Or find the deployed project at: https://ikt-frontend-new.vercel.app
