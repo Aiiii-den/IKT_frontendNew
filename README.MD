@@ -31,6 +31,7 @@ POST: https://ikt-writingsapi.onrender.com/writing
 And enables the following functionality:
 - installation 
 - offline usage 
+- IndexedDB
 - geolocation 
 - camera usage 
 - push notifications 
