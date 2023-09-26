@@ -13,7 +13,7 @@ let date = new Date().toISOString();
 getRandomPromptButton.addEventListener('click', getRandomPrompt);
 
 function getRandomPrompt() {
-    fetch('https://ikt-promptapi.onrender.com/random') //somethings wrong here
+    fetch('https://ikt-promptapi.onrender.com/random')
         .then(response => {
             console.log('Getting data from promptAPI ...', response);
             return response.json();
@@ -71,12 +71,12 @@ function sendDataToBackend() {
         "text": writingValue
     };
 
-    fetch('https://ikt-writingsapi.onrender.com/writing', { 
+    fetch('https://ikt-writingsapi.onrender.com/writing', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json' // Set the Content-Type header
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(requestData) // Stringify the body data
+        body: JSON.stringify(requestData)
     })
         .then(response => {
             console.log('Data sent to backend ...', response);
@@ -90,11 +90,12 @@ function sendDataToBackend() {
  */
 let networkDataReceived = false;
 
-fetch('https://ikt-promptapi.onrender.com/prompt') 
-    .then((res) => {
-        return res.json();
-    })
-    .then((data) => {
+fetch('https://ikt-promptapi.onrender.com/prompt', {
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json',
+    }
+}).then((data) => {
         networkDataReceived = true;
         console.log('From backend ...', data);
         updateUI(data);

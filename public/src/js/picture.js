@@ -117,10 +117,9 @@ function createCard(card) {
 }
 
 
-// --> CAUSES FOTO SAVING TO STOP WORKING  WTF IS GOING ON?
 let networkDataReceived = false;
 
-fetch('http://localhost:8080/image')
+fetch('https://ikt-imagesapi-new.onrender.com/image')
     .then((res) => {
         return res.json();
     })
@@ -129,17 +128,6 @@ fetch('http://localhost:8080/image')
         console.log('From backend ...', data);
         updateUI(data);
     });
-
-    /*
-if ('indexedDB' in window) {
-    readAllData('images')
-        .then(data => {
-            if (!networkDataReceived) {
-                console.log('From cache ...', data);
-                updateUI(data);
-            }
-        })
-}*/
 
 function sendDataToBackend() {
     const formData = new FormData();
@@ -221,7 +209,7 @@ form.addEventListener('submit', event => {
 
 
 captureButton.addEventListener('click', event => {
-    event.preventDefault(); // nicht absenden und neu laden
+    event.preventDefault();
     canvasElement.style.display = 'block';
     videoPlayer.style.display = 'none';
     captureButton.style.display = 'none';
@@ -231,7 +219,6 @@ captureButton.addEventListener('click', event => {
         track.stop();
     })
     imageURI = canvas.toDataURL("image/jpeg");
-    // console.log('imageURI', imageURI)       // base64-String des Bildes
 
     fetch(imageURI)
         .then(res => {
@@ -272,7 +259,7 @@ locationButton.addEventListener('click', event => {
         console.log('current position: ', fetchedLocation);
 
         let nominatimURL = 'https://nominatim.openstreetmap.org/reverse';
-        nominatimURL += '?format=jsonv2';   // format=[xml|json|jsonv2|geojson|geocodejson]
+        nominatimURL += '?format=jsonv2';
         nominatimURL += '&lat=' + fetchedLocation.latitude;
         nominatimURL += '&lon=' + fetchedLocation.longitude;
 
